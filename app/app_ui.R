@@ -1,0 +1,49 @@
+#' @import shiny shinydashboard
+app_ui <- function() {
+# Define ui functions 
+  dashboardPage(
+  # Header  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    header = dashboardHeader(title = "Azithromycin PK Simulator"),
+  # Sidebar - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    sidebar = dashboardSidebar(
+      sidebarMenu(
+        menuItem("Simulate", tabName = "simulate", icon = icon("line-chart")),
+        menuItem("About", tabName = "about", icon = icon("question-circle"),
+          menuSubItem("Model", tabName = "model", icon = icon("code")),
+          menuSubItem("Resources", tabName = "resources", icon = icon("desktop"))
+        ) # menuItem
+      ),  # sidebarMenu
+      width = 150, collapsed = TRUE
+    ),  # dashboardSidebar
+  # Body  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    body = dashboardBody(
+    # Customise style tags for slider input
+      tags$style(HTML(".irs-grid-text, .irs-min, .irs-max {color:#000000;
+        font-size:12px}")),
+      tags$style(HTML(".irs-single, .irs-from, .irs-to {font-size:12px}")),
+      tabItems(
+      # Tab 1 - Simulate
+        tabItem(tabName = "simulate",
+          fluidRow(
+          # Dosing Input
+            column(6,
+              mod_regimen_ui("reg")
+            ), # column
+          # Model Output
+            column(6,
+              mod_plotsim_ui("poppk")
+            )  # column
+          )  # fluidRow
+        ), # tabItem
+      # Tab 2.1 - Model
+        tabItem(tabName = "model",
+          mod_infotab_ui("model")
+        ), # tabItem
+      # Tab 2.2 - Resources
+        tabItem(tabName = "resources",
+          mod_infotab_ui("session")
+        ) # tabItem
+      ) # tabItems
+    )  # dashboardBody
+  )  # dashboardPage
+}  # app_ui
