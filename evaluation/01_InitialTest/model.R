@@ -49,8 +49,8 @@ $PARAM
   POPDFPMLC = 52,  // distribution factor (PML cytosol), dimensionless
   
 // Literature/Derived Values
-  FUNPLAS = 0.0076,  // fraction unionised in plasma, dimensionless
-  FUNPMLC = 0.0012,  // fraction unionised in PML cytosol, dimensionless
+  FUP = 0.007581,  // fraction unionised in plasma, dimensionless
+  FUPMLC = 0.0012,  // fraction unionised in PML cytosol, dimensionless
   RATPMLC = 0.351,  // ratio of PML cytosol to total PML conc., dimensionless
   RATPMLL = 13.33,  // ratio of PML lysosome to total PML conc., dimensionless
     
@@ -98,6 +98,13 @@ $MAIN
   double VP2F = POPVP2F;
   double QP2F = POPQP2F;
   
+// Micro-rate Constants
+  double K20 = CLF/VCF;
+  double K23 = QP1F/VCF;
+  double K32 = QP1F/VP1F;
+  double K24 = QP2F/VCF;
+  double K42 = QP2F/VP2F;
+  
 // Tissue Kinetic Parameters
   double KIN = POPKIN*exp(ETA4);
   double KOUT = POPKOUT;
@@ -116,26 +123,23 @@ $MAIN
   ALAG_DEPOT = TLAG;
 
 $ODE
-// Unionised drug in plasma
-  double PLASU = PLAS*FUNPLAS;
-
 // Three-Compartment Pharmacokinetic Differential Equations
   dxdt_DEPOT = -KA*DEPOT;
-  dxdt_PLAS = KA*DEPOT + QP1F*PER1/VP1F - QP1F*PLAS/VCF + QP2F*PER2/VP2F -  
-    QP2F*PLAS/VCF - KIN*PLAS + KOUT*MUSC - KIN*PLAS + KOUT*SUBC - 
-    KIN*PLASU + KOUT*PMLC - CLF*PLAS/VCF;
-  dxdt_PER1 = QP1F*PLAS/VCF + -QP1F*PER1/VP1F;
-  dxdt_PER2 = QP2F*PLAS/VCF + -QP2F*PER2/VP2F;
+  dxdt_PLAS = KA*DEPOT - K23*PLAS + K32*PER1 - K24*PLAS + K42*PER2 - KIN*PLAS + 
+    KOUT*MUSC - KIN*PLAS + KOUT*SUBC - KIN*FUP*PLAS + KOUT*PMLC - K20*PLAS;
+  dxdt_PER1 = K23*PLAS + -K32*PER1;
+  dxdt_PER2 = K24*PLAS + -K42*PER2;
   
 // Tissue Pharmacokinetic Differential Equations
   dxdt_MUSC = KIN*PLAS - KOUT*MUSC + KOFF*MUSCB - KON*MUSC;
   dxdt_SUBC = KIN*PLAS - KOUT*SUBC + KOFF*SUBCB - KON*SUBC;
-  dxdt_PMLC = KIN*PLASU - KOUT*PMLC + KOFF*PMLCB - KON*PMLC;
+  dxdt_PMLC = KIN*FUP*PLAS - KOUT*PMLC + KOFF*PMLCB - KON*PMLC;
   dxdt_MUSCB = KON*MUSC - KOFF*MUSCB;
   dxdt_SUBCB = KON*SUBC - KOFF*SUBCB;
   dxdt_PMLCB = KON*PMLC - KOFF*PMLCB;
 
 $TABLE  
+// Individual Predictions
 // Plasma Concentrations
   double CPLAS = SF*PLAS/VCF;  // plasma (unbound)
 // fraction unbound is saturable for azithromycin
@@ -152,15 +156,24 @@ $TABLE
   
 // PML Concentrations
   double CPMLC = SF*PMLC*KOUT*DFPMLC/(KIN*VCF);  // PML cytosol (unionised)
-  double CPMLCT = CPMLC/FUNPMLC;  // PML cytosol (total)
+  double CPMLCT = CPMLC/FUPMLC;  // PML cytosol (total)
   double CPMLT = CPMLCT/RATPMLC;  // PML (total)
   double CPMLLT = RATPMLL*CPMLT;  // PML lysosome (total)
   
+// Dependent Variable
+// Scaling factor must be applied to additive component of error model
+// Additive EPS (ug/mL), IPRED (ng/mL)
+  double DVPLAS = CPLAS*(1 + EPS(1)) + SF*EPS(2);
+  double DVMUSC = CPLAS*(1 + EPS(3)) + SF*EPS(4);
+  double DVSUBC = CPLAS*(1 + EPS(5)) + SF*EPS(6);
+  double DVPMLC = CPLAS*(1 + EPS(7)) + SF*EPS(8);
+  
 $CAPTURE  
 // Capture output
-  FU CPLAS CPLAST CMUSC CSUBC CPMLC CPMLCT CPMLT CPMLLT // Outputs
-//  TLAG CLF VCF KIN DFMUSC DFSUBC DFPMLC  // Individual Parameters
-//  ETA1 ETA2 ETA3 ETA4 ETA5 ETA6 ETA7  // Inter-individual Variability  
+  DVPLAS DVMUSC DVSUBC DVPMLC // Dependent Variables
+  CPLAS CPLAST CMUSC CSUBC CPMLC CPMLCT CPMLT CPMLLT // Individual Predictions
+  FU TLAG CLF VCF KIN DFMUSC DFSUBC DFPMLC  // Individual Parameters
+  ETA1 ETA2 ETA3 ETA4 ETA5 ETA6 ETA7  // Inter-individual Variability  
 '
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Compile model 

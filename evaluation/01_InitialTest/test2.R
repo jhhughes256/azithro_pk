@@ -34,25 +34,36 @@
   )
   
 # Source model code and compile (compiled model object: `mod` )
-  source("model/code.R")
+  source("evaluation/01_InitialTest/model.R")
+  
+# Create population of individuals
+  idata <- omat(mod, make = TRUE) %>%
+    MASS::mvrnorm(n = 1000, mu = rep(0, nrow(.)), Sigma = .) %>%
+    as_tibble() %>%
+    set_names(paste0("ETA", 1:ncol(.))) %>%
+    mutate(ID = 1:1000)
 
 # Run a trial simulation
   simdf <- mod %>% 
+    idata_set(idata) %>%
     ev(amt = 500, ii = 24, addl = 2) %>% 
     mrgsim(end = 220, delta = 0.5) %>%
     as_tibble() %>%
     select(time, CPLAST, CMUSC, CSUBC, CPMLT) %>%
     pivot_longer(cols = contains("C"), names_to = "DVID", values_to = "DV") %>%
+    group_by(time, DVID) %>%
+    summarise(DVmean = mean(DV), DVlo = quantile(), DVhi) %>%
+    ungroup() %>%
     mutate(DVIDf = factor(DVID, labels = c("Muscle (unb.)", "Plasma (tot.)", 
       "PML (tot.)", "Subcutis (unb.)")))
   
 # Plot results of trial simulation
   p <- NULL
   p <- ggplot(simdf)
-  p <- p + geom_line(aes(x = time, y = DV, colour = DVIDf), size = 1)
+  p <- p + geom_line(aes(x = time, y = DVmean, colour = DVIDf), size = 1)
   p <- p + geom_hline(yintercept = 2000, linetype = "dashed", 
     colour = cbPal$brown, size = 1)
-  p <- p + geom_text(x = 180, y = log10(1000), label = "~MIC[90] == 2000 ~ng/mL",
+  p <- p + geom_text(x = 204, y = log10(2000)-0.3, label = "~MIC[90]",
     parse = TRUE)
   p <- p + scale_x_continuous("Time (hour)", breaks = 0:9*24)
   p <- p + scale_y_log10("Concentration (ng/mL)", 

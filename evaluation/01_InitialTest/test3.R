@@ -5,7 +5,12 @@
 #   Development of a Population Pharmacokinetic Model Characterizing the Tissue
 #   Distribution of Azithromycin in Healthy Subjects, Antimicrobial Agents and 
 #   Chemotherapy Oct 2014, 58 (11) 6675-6684; DOI: 10.1128/AAC.02904-14
-# This script aims to replicate Figure 3 from that manuscript.
+# This script aims to predict concentrations upon being given the azithromycin
+# regiment described in recent literature on COVID-19:
+#   Gautret et al. Hydroxychloroquine and azithromycin as a treatment of 
+#   COVID-19: results of an open-label non-randomized clinical trial, 
+#   International Journal of Antimicrobial Agents, Mar 2020; 
+#   DOI: 10.1016/j/ijantimicag.2020.105949
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Load packages
   library(tidyverse)
@@ -34,37 +39,22 @@
   )
   
 # Source model code and compile (compiled model object: `mod` )
-  source("model/code.R")
-  
-# Create population of individuals
-  idata <- omat(mod, make = TRUE) %>%
-    MASS::mvrnorm(n = 1000, mu = rep(0, nrow(.)), Sigma = .) %>%
-    as_tibble() %>%
-    set_names(paste0("ETA", 1:ncol(.))) %>%
-    mutate(ID = 1:1000)
+  source("evaluation/01_InitialTest/model.R")
 
 # Run a trial simulation
   simdf <- mod %>% 
-    idata_set(idata) %>%
-    ev(amt = 500, ii = 24, addl = 2) %>% 
+    ev(time = c(0, 24, 48, 72, 96), amt = c(500, rep(250, times = 4))) %>% 
     mrgsim(end = 220, delta = 0.5) %>%
     as_tibble() %>%
     select(time, CPLAST, CMUSC, CSUBC, CPMLT) %>%
     pivot_longer(cols = contains("C"), names_to = "DVID", values_to = "DV") %>%
-    group_by(time, DVID) %>%
-    summarise(DVmean = mean(DV), DVlo = quantile(), DVhi) %>%
-    ungroup() %>%
     mutate(DVIDf = factor(DVID, labels = c("Muscle (unb.)", "Plasma (tot.)", 
       "PML (tot.)", "Subcutis (unb.)")))
   
 # Plot results of trial simulation
   p <- NULL
   p <- ggplot(simdf)
-  p <- p + geom_line(aes(x = time, y = DVmean, colour = DVIDf), size = 1)
-  p <- p + geom_hline(yintercept = 2000, linetype = "dashed", 
-    colour = cbPal$brown, size = 1)
-  p <- p + geom_text(x = 204, y = log10(2000)-0.3, label = "~MIC[90]",
-    parse = TRUE)
+  p <- p + geom_line(aes(x = time, y = DV, colour = DVIDf), size = 1)
   p <- p + scale_x_continuous("Time (hour)", breaks = 0:9*24)
   p <- p + scale_y_log10("Concentration (ng/mL)", 
     breaks = c(1,  10, 100, 1000, 10000, 100000), labels = comma)
