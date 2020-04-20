@@ -52,8 +52,10 @@ fct_simulate_model <- function(input, session) {
     purrr::when(
       input$nid == 1 ~ .,
       input$nid > 1 ~ mrgsolve::idata_set(., mrgidata)) %>%
-    mrgsolve::mrgsim_df(end = mrgendtime, delta = mrgendtime/300,
-      Request = c("CPLAST", "CLUNG", "CWBCT", "CALMAT"))
+    mrgsolve::mrgsim_df(end = mrgendtime, delta = mrgendtime/300, 
+      Request = c("CPLAST", "CLUNG", "CWBCT", "CALMAT", 
+        "ALMATEC50", "LUNGTEC50", "ALMATEC90", "LUNGTEC90")
+    )  # mrgsim_df
   
 # Return model simulations as output
   return(mrgout)

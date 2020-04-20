@@ -1,16 +1,17 @@
-#' Compile Azithromycin Population Pharmacokinetic Model
-#' 
-#' @description 
-#' Compiles the model used in the application
-#' 
-#' @param session internal
-#' 
-#' @return A compiled model
-#' @keywords internal
-#' @export
-#' 
-
-fct_compile_model <- function(session) {
+# Azithromycin Population Pharmacokinetic Model
+# ------------------------------------------------------------------------------
+# Hybrid Model plus:
+# - Lung compartment attached to plasma
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Set PATH for mrgsolve
+# Get version of R
+  Rversion <- paste("R-", getRversion(), sep="")
+# Set path for Rtools
+  Sys.setenv(PATH = paste0(glue::glue(
+    "c:/program files/R/{Rversion}/bin/x64/;", "c:/RTools/bin/;",
+    "c:/RTools/mingw_64/bin/;", Sys.getenv("PATH")
+  )))  # Sys.setenv
+    
 # Define model code
   code <- '
 $INIT
@@ -214,10 +215,7 @@ $CAPTURE
   FU CLF VCF KIN DFMUSC DFSUBC DFWBCC  // Individual Parameters
   ETA1 ETA2 ETA3 ETA4 ETA5 ETA6  // Inter-individual Variability  
 '
-  
-# Compile model and store in session userData so it can be accessed anywhere
-# within the application. 
-# Accessed in fct_simulate_model and in mod_session_server.
-  session$userData[["mod"]] <- mrgsolve::mcode("Hughes2020_Azithromycin", code)
-  
-}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Compile model 
+  mod <- mrgsolve::mcode("DevMod_Azithromycin", code)
+

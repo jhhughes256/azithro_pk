@@ -37,6 +37,7 @@ mod_plotsim_server <- function(input, output, session, rsim) {
 # Generate plotted line from simulation data
   Rlines <- reactive({
     rsim$out %>%
+      dplyr::select(-tidyselect::contains("TEC")) %>%
       dplyr::mutate(time = time/24) %>%
       tidyr::pivot_longer(cols = -c("ID", "time"),
         names_to = "Tissue", values_to = "DV") %>%
