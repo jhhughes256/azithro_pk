@@ -34,9 +34,9 @@ mod_plotsim_server <- function(input, output, session, rsim) {
 # Define namespace function for IDs
   ns <- session$ns
   
-# Generate plotted line from simulation data
-  Rlines <- reactive({
-    rsim$out %>%
+# Create function for generating plotted lines from simulation data
+  lines_fn <- function(rsim) {
+    rsim %>%
       dplyr::select(-tidyselect::contains("TEC")) %>%
       dplyr::mutate(time = time/24) %>%
       tidyr::pivot_longer(cols = -c("ID", "time"),
@@ -49,11 +49,19 @@ mod_plotsim_server <- function(input, output, session, rsim) {
         length(unique(.$ID)) > 1 ~ dplyr::summarise_at(., "DV", plot_summary_fn())
       ) %>%
       dplyr::ungroup()
+  }
+  
+# Generate plotted line from current and saved simulation data
+  Rlines <- reactive({
+    lines_fn(rsim$out)
+  })
+  Slines <- reactive({
+    lines_fn(rsim$save)
   })
   
-# Generate plotted ribbon from simulation data (only called when nid > 1)
-  Rribbon <- reactive({
-    Rlines() %>%
+# Create function for generating prediction intervals from simulation data
+  ribbon_fn <- function(lines) {
+    lines %>%
       dplyr::select(time, Tissue, tidyselect::contains("pi")) %>%
       tidyr::pivot_longer(cols = tidyselect::contains("pi"), 
         names_to = "PI", values_to = "value") %>%
@@ -61,9 +69,17 @@ mod_plotsim_server <- function(input, output, session, rsim) {
       tidyr::pivot_wider(id_cols = c("time", "Tissue", "PI"),
         names_from = "id", values_from = "value") %>%
       dplyr::mutate(PI = paste(Tissue, PI))
+  }
+  
+# Generate plotted ribbon from current and saved simulation data
+  Rribbon <- reactive({
+    ribbon_fn(Rlines())
+  })
+  Sribbon <- reactive({
+    ribbon_fn(Slines())
   })
 
-# 
+# Create main 
   output$mainplot <- renderPlot({
   # Define azithromycin IC90 (ng/mL)
     az_ic90 <- 6500  # TODO: do we want the user to access this?
