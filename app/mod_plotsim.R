@@ -23,6 +23,7 @@ mod_plotsim_ui <- function(id) {
 # * box width according to parent div
   box(width = "100%", title = "Azithromycin Concentrations", align = "center",
     plotOutput(ns("mainplot"), height = "450px"),
+    footer = mod_tablesim_ui(ns("table")),
     status = "primary", solidHeader = TRUE
   )  # box
 }  # mod_plotsim_ui
@@ -140,5 +141,9 @@ mod_plotsim_server <- function(input, output, session, rsim) {
       return(p)
     }
   })
+  
+# Call module responsible for table output and pass in inputs
+# Assign output from module to rsim
+  callModule(mod_tablesim_server, "table", rsim = rsim)
   
 }  # mod_plotsim_server

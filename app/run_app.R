@@ -18,6 +18,7 @@
   source("mod_regimen.R")
   source("mod_simulate.R")
   source("mod_plotsim.R")
+  source("mod_tablesim.R")
   source("mod_infotab.R")
 
 # Source in business logic ----------------------------------------------------
