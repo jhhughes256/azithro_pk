@@ -3,6 +3,7 @@
 #' @title   mod_simulate_ui and mod_simulate_server
 #' @description  Shiny module which handles all dosing regimen input. Includes 
 #' buttons to start simulation and save/clear simulation output for comparison.
+#' Child module of mod_regimen.
 #'
 #' @param id shiny id
 #' @param input internal

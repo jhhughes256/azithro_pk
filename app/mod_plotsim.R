@@ -3,7 +3,7 @@
 #' @title   mod_plotsim_ui and mod_plotsim_server
 #' @description  Shiny module which handles display of concentration-time plot.
 #' Includes data processing required to generate the lines and ribbons in the
-#' plot.
+#' plot. Parent module for mod_tablesim.
 #'
 #' @param id shiny id
 #' @param input internal
@@ -41,7 +41,7 @@ mod_plotsim_server <- function(input, output, session, rsim) {
 # * function is applied to both current and saved outputs
 # * removes TEC50 and TEC90 columns prior to processing
 # * plot_summary_fn can be found in utils.R
-  lines_fn <- function(rsim, plot_summary_arg) {
+  fct_plotlines <- function(rsim, plot_summary_arg) {
     rsim %>%
       dplyr::select(-tidyselect::contains("TEC")) %>%
       dplyr::mutate(time = time/24) %>%
@@ -62,14 +62,14 @@ mod_plotsim_server <- function(input, output, session, rsim) {
 # * generate 90%, 80%, 60%, 40% and 20% prediction intervals for current output
 # * generate 90% prediction intervals for saved output
   Rlines <- reactive({
-    lines_fn(rsim$out, c(0.9, 0.8, 0.6, 0.4, 0.2))
+    fct_plotlines(rsim$out, c(0.9, 0.8, 0.6, 0.4, 0.2))
   })
   Slines <- reactive({
-    lines_fn(rsim$save, c(0.9))
+    fct_plotlines(rsim$save, c(0.9))
   })
   
 # Create function for extracting prediction intervals from summary data
-  ribbon_fn <- function(lines) {
+  fct_plotribbons <- function(lines) {
     lines %>%
       dplyr::select(time, Tissue, tidyselect::contains("pi")) %>%
       tidyr::pivot_longer(cols = tidyselect::contains("pi"), 
@@ -81,15 +81,15 @@ mod_plotsim_server <- function(input, output, session, rsim) {
   }
   
 # Generate plotted ribbon from current and saved summary data
-# * try used when using ribbon_fn on Slines() to help protect from error
+# * try used when using fct_plotribbons on Slines() to help protect from error
 #     + class(Sribbon()) == "try-error" when saved output is from a simulation
 #       with `rv$nid` == 1, while current output is from a simulation with
 #       `rv$nid` > 1.
   Rribbon <- reactive({
-    ribbon_fn(Rlines())
+    fct_plotribbons(Rlines())
   })
   Sribbon <- reactive({
-    try(ribbon_fn(Slines()))
+    try(fct_plotribbons(Slines()))
   })
 
 # Create main plot to be displayed in the application
@@ -123,7 +123,7 @@ mod_plotsim_server <- function(input, output, session, rsim) {
       }
     # Azithromycin SARS-CoV-2 IC90
       p <- p + ggplot2::geom_hline(yintercept = az_ic90, linetype = "dashed")
-      p <- p + ggplot2::geom_text(x = 21, y = log10(az_ic90) + 0.2, label = "IC90")
+      p <- p + ggplot2::geom_text(x = 21, y = log10(az_ic90) + 0.2, label = "EC90")
     # Axes
       p <- p + ggplot2::scale_y_log10(paste("Concentration (ng/mL)"),
         labels = scales::comma)

@@ -4,7 +4,8 @@
 #' @description  Shiny module which handles all dosing regimen input. Includes
 #' dynamic dose regimen entry field with up to three rows to enter customised
 #' dosing regimens. Also allows to choose from presets which are based on 
-#' current dosing regimens used for NCT COVID-19 trials.
+#' current dosing regimens used for NCT COVID-19 trials. Parent module of 
+#' mod_simulate.
 #'
 #' @param id shiny id
 #' @param input internal
