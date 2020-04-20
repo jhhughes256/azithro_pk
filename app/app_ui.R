@@ -24,15 +24,15 @@ app_ui <- function() {
       tabItems(
       # Tab 1 - Simulate
         tabItem(tabName = "simulate",
-          fluidRow(
+          fluidRow(  # removes shinydashboard background issues
           # Dosing Input
-            column(6,
+            div(class = "col-xs-12 col-sm-6 col-md-6 col-lg-4",  # define layout widths
               mod_regimen_ui("reg")
-            ), # column
+            ),  # div
           # Model Output
-            column(6,
+            div(class = "col-xs-12 col-sm-6 col-md-6 col-lg-8",  # define layout widths
               mod_plotsim_ui("poppk")
-            )  # column
+            )  # div
           )  # fluidRow
         ), # tabItem
       # Tab 2.1 - Model

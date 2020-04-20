@@ -18,7 +18,7 @@ mod_plotsim_ui <- function(id) {
 # Define namespace function for IDs
   ns <- NS(id)
 # Create tagList to be used in the UI
-  box(width = NULL, title = "Azithromycin Concentrations", align = "center",
+  box(width = "100%", title = "Azithromycin Concentrations", align = "center",
     plotOutput(ns("mainplot"), height = "450px"),
     status = "primary", solidHeader = TRUE
   )  # box

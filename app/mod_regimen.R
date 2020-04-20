@@ -1,7 +1,10 @@
 # Module UI
   
 #' @title   mod_regimen_ui and mod_regimen_server
-#' @description  A default shiny module
+#' @description  Shiny module which handles all dosing regimen input. Includes
+#' dynamic dose regimen entry field with up to three rows to enter customised
+#' dosing regimens. Also allows to choose from presets which are based on 
+#' current dosing regimens used for NCT COVID-19 trials.
 #'
 #' @param id shiny id
 #' @param input internal
@@ -18,7 +21,11 @@ mod_regimen_ui <- function(id) {
 # Define namespace function for IDs
   ns <- NS(id)
 # Create tagList to be used in the UI
-  box(width = NULL, title = "Regimen Information", align = "center",
+# * box with width according to parent div, footer from child mod_simulate
+# * dynamic input box UI from server called using uiOutput
+# * action buttons "add" and "remove" are observed, interact with dynamic UI
+# * selectInput choices are observed, interact with dynamic UI
+  box(width = "100%", title = "Regimen Information", align = "center",
     numericInput(ns("bwt"), "Patient Body Weight (kg):",
       value = 79, min = 1, step = 0.1),
     selectInput(ns("choose"), "Select dosing regimen:",
@@ -54,8 +61,17 @@ mod_regimen_server <- function(input, output, session) {
   ns <- session$ns
   
 # Create reactiveValues object to store input values
+# * n is the number of dosing regimens 
+#     + it dictates the number of rendered input boxes as well as how many
+#       amt, int and dur values are used when passing to the model using `ev`
+# * amt, int and dur are vectors for the dose, interval and duration for the
+#   first, second and third dosing regimen, pasted to `ev`
+#     + if no second or third dosing regimen exists, values in those positions
+#       are ignored
+# * bwt is passed to the model using `param`
+# * nid is the number of individuals to simulate
   rv <- reactiveValues(
-    n = 1,
+    n = 1,  # number of rendered input boxes (min: 1, max: 3)
     amt = rep(500, 3),
     int = rep(24, 3),
     dur = rep(3, 3),
@@ -63,7 +79,14 @@ mod_regimen_server <- function(input, output, session) {
     nid = 1
   )
   
-# Define reactive function for dynamic ui
+# Define reactive function for dynamic input box ui
+# * map used for creating the same set of input boxes `rv$n` times
+# * ilab and padding are defined so that only one label is rendered for all
+#   `rv$n` input boxes
+# * fluidRow wrapped in column to remove padding issues
+# * div used to define column function with width that applies to any size screen
+# * inputId given standardised name depending on the row of input boxes it is in
+# * value equals corresponding `rv` value indexed using input box row
   Rui <- reactive({
     purrr::map(seq(1, rv$n, by = 1), function(i) {
       if (i == 1) { 
@@ -74,30 +97,30 @@ mod_regimen_server <- function(input, output, session) {
         padding <- "padding-left:0px"
       }
       column(12, fluidRow(
-        column(3,
+        div(class = "col-xs-3",
           numericInput(ns(paste0("amt", i)), 
             label = ilab[[1]], 
             value = rv$amt[[i]])
-        ), # column
-        column(1,
+        ), # div
+        div(class = "col-xs-1",
           style = padding,
           h5(strong("mg, every"))
         ), # column
-        column(3,
+        div(class = "col-xs-3",
           numericInput(ns(paste0("int", i)), 
             label = ilab[[2]], 
             value = rv$int[[i]])
         ), # column
-        column(1,
+        div(class = "col-xs-1",
           style = padding,
           h5(strong("hours, for"))
         ), # column
-        column(3,
+        div(class = "col-xs-3",
           numericInput(ns(paste0("dur", i)), 
             label = ilab[[3]], 
             value = rv$dur[[i]])
         ), # column
-        column(1,
+        div(class = "col-xs-1",
           style = padding,
           h5(strong("days"))
         )  # column
@@ -106,6 +129,7 @@ mod_regimen_server <- function(input, output, session) {
   })  # reactive
   
 # Define reactive function containing input values
+# * map_dbl collects each input box value using standardised naming scheme
   Rinput <- reactive({
     list(
       amt = purrr::map_dbl(seq(1, rv$n, by = 1), ~ input[[paste0("amt", .x)]]),
@@ -117,6 +141,8 @@ mod_regimen_server <- function(input, output, session) {
   })  # reactive
   
 # Observe add button for dynamic ui
+# * Update values in `rv[[names]]` using existing input boxes using `index`
+# * Add 1 to the `rv$n` if below the maximum (3)
   observeEvent(input$add, {
     names <- c("amt", "int", "dur")
     index <- seq(1, rv$n, by = 1)
@@ -125,14 +151,18 @@ mod_regimen_server <- function(input, output, session) {
   })  # observeEvent
   
 # Observe remove button for dynamic ui
+# * Update values in `rv[[names]]` using existing input boxes using `index`
+# * Subtract 1 from the `rv$n` if above the minimum (1)
   observeEvent(input$rem, {
     names <- c("amt", "int", "dur")
     index <- seq(1, rv$n, by = 1)
     purrr::walk(names, ~ { rv[[.x]][index] <- Rinput()[[.x]][index] })
-    if (rv$n != 1) { rv$n <- rv$n - 1 }
+    if (rv$n > 1) { rv$n <- rv$n - 1 }
   })  # observeEvent
   
 # Observe values of input$choose for dynamic ui
+# * Based on the selection, update the value of `rv$n` based on desired preset
+# * Using the new `rv$n` value to define the index, update `rv` dosing values
   observeEvent(input$choose, {
     rv$n <- dplyr::case_when(
       as.double(input$choose) %in% c(1, 3, 4) ~ 1,
