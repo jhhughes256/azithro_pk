@@ -35,7 +35,7 @@ mod_plotsim_server <- function(input, output, session, rsim) {
   ns <- session$ns
   
 # Create function for generating plotted lines from simulation data
-  lines_fn <- function(rsim) {
+  lines_fn <- function(rsim, plot_summary_arg) {
     rsim %>%
       dplyr::select(-tidyselect::contains("TEC")) %>%
       dplyr::mutate(time = time/24) %>%
@@ -46,17 +46,18 @@ mod_plotsim_server <- function(input, output, session, rsim) {
       dplyr::group_by(time, Tissue) %>%
       purrr::when(
         length(unique(.$ID)) == 1 ~ dplyr::summarise(., median = median(DV)),
-        length(unique(.$ID)) > 1 ~ dplyr::summarise_at(., "DV", plot_summary_fn())
+        length(unique(.$ID)) > 1 ~ dplyr::summarise_at(., "DV", 
+          plot_summary_fn(plot_summary_arg))
       ) %>%
       dplyr::ungroup()
   }
   
 # Generate plotted line from current and saved simulation data
   Rlines <- reactive({
-    lines_fn(rsim$out)
+    lines_fn(rsim$out, c(0.9, 0.8, 0.6, 0.4, 0.2))
   })
   Slines <- reactive({
-    lines_fn(rsim$save)
+    lines_fn(rsim$save, c(0.9))
   })
   
 # Create function for generating prediction intervals from simulation data
@@ -76,7 +77,7 @@ mod_plotsim_server <- function(input, output, session, rsim) {
     ribbon_fn(Rlines())
   })
   Sribbon <- reactive({
-    ribbon_fn(Slines())
+    try(ribbon_fn(Slines()))
   })
 
 # Create main 
@@ -87,12 +88,26 @@ mod_plotsim_server <- function(input, output, session, rsim) {
     if (!is.null(rsim$out)) {  # if simulation has occurred
     # Define plot
       p <- ggplot2::ggplot(data = Rlines())
-    # Azithromycin Model predictions
+    # Azithromycin Model current predictions
       p <- p + ggplot2::geom_line(ggplot2::aes(x = time, y = median, 
         colour = Tissue), size = 1)
       if (length(unique(rsim$out$ID)) > 1) {  # If nid > 1
         p <- p + ggplot2::geom_ribbon(ggplot2::aes(x = time, ymin = lo, ymax = hi, 
           group = PI, fill = Tissue), alpha = 0.1, data = Rribbon())
+      }
+    # Azithromycin Model saved predictions
+    # Display if simulation output has been saved, and isn't identical to current output
+      if (!is.null(rsim$save) & !isTRUE(all.equal(rsim$save, rsim$out))) {
+        p <- p + ggplot2::geom_line(ggplot2::aes(x = time, y = median, 
+          colour = Tissue), size = 1, linetype = "dashed", data = Slines())
+        if (length(unique(rsim$out$ID)) > 1 & !"try-error" %in% class(Sribbon())) {  # If nid > 1
+          p <- p + ggplot2::geom_line(ggplot2::aes(x = time, y = lo, 
+            colour = Tissue), size = 1, alpha = 0.7, linetype = "dotted", 
+            data = Sribbon())
+          p <- p + ggplot2::geom_line(ggplot2::aes(x = time, y = hi, 
+            colour = Tissue), size = 1, alpha = 0.7, linetype = "dotted", 
+            data = Sribbon())
+        }
       }
     # Azithromycin SARS-CoV-2 IC90
       p <- p + ggplot2::geom_hline(yintercept = az_ic90, linetype = "dashed")

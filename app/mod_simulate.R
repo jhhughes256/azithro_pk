@@ -18,12 +18,17 @@ mod_simulate_ui <- function(id) {
 # Define namespace function for IDs
   ns <- NS(id)
 # Create tagList to be used in the UI
-  div(style = "display:inline-block",
+  tagList(
     dashboardButton(ns("sim"), "Update Dosing Regimen",
       status = "success"),  # dashboardButton
-    dashboardButton(ns("save"), "Save Current Output",
-      status = "success")  # dashboardButton
-  )  # div
+    br(), br(),  # spacing
+    div(style = "display:inline-block",
+      dashboardButton(ns("save"), "Save Current Output",
+        status = "success"),  # dashboardButton
+      dashboardButton(ns("clear"), "Clear Current Output",
+        status = "success")  # dashboardButton
+    )  # div
+  )  # tagList
 }  # mod_simulate_ui
 
 # Module Server
@@ -62,6 +67,11 @@ mod_simulate_server <- function(input, output, session, Rinput, rv) {
     purrr::walk(names, ~ { rv[[.x]][index] <- na.omit(Rinput()[[.x]][index]) })
   # Save current simulation output to rsim
     rsim$save <- rsim$out
+  })  # observeEvent
+  
+# Observe clear button, when pressed clear current output from `rsim$save`
+  observeEvent(input$clear, {
+    rsim$save <- NULL
   })  # observeEvent
   
 # Return rout object to parent module (mod_regimen_server)
