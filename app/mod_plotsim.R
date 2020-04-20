@@ -1,7 +1,9 @@
 # Module UI
   
 #' @title   mod_plotsim_ui and mod_plotsim_server
-#' @description  A default shiny module
+#' @description  Shiny module which handles display of concentration-time plot.
+#' Includes data processing required to generate the lines and ribbons in the
+#' plot.
 #'
 #' @param id shiny id
 #' @param input internal
@@ -18,6 +20,7 @@ mod_plotsim_ui <- function(id) {
 # Define namespace function for IDs
   ns <- NS(id)
 # Create tagList to be used in the UI
+# * box width according to parent div
   box(width = "100%", title = "Azithromycin Concentrations", align = "center",
     plotOutput(ns("mainplot"), height = "450px"),
     status = "primary", solidHeader = TRUE
@@ -35,6 +38,9 @@ mod_plotsim_server <- function(input, output, session, rsim) {
   ns <- session$ns
   
 # Create function for generating plotted lines from simulation data
+# * function is applied to both current and saved outputs
+# * removes TEC50 and TEC90 columns prior to processing
+# * plot_summary_fn can be found in utils.R
   lines_fn <- function(rsim, plot_summary_arg) {
     rsim %>%
       dplyr::select(-tidyselect::contains("TEC")) %>%
@@ -53,6 +59,8 @@ mod_plotsim_server <- function(input, output, session, rsim) {
   }
   
 # Generate plotted line from current and saved simulation data
+# * generate 90%, 80%, 60%, 40% and 20% prediction intervals for current output
+# * generate 90% prediction intervals for saved output
   Rlines <- reactive({
     lines_fn(rsim$out, c(0.9, 0.8, 0.6, 0.4, 0.2))
   })
@@ -60,7 +68,7 @@ mod_plotsim_server <- function(input, output, session, rsim) {
     lines_fn(rsim$save, c(0.9))
   })
   
-# Create function for generating prediction intervals from simulation data
+# Create function for extracting prediction intervals from summary data
   ribbon_fn <- function(lines) {
     lines %>%
       dplyr::select(time, Tissue, tidyselect::contains("pi")) %>%
@@ -72,7 +80,11 @@ mod_plotsim_server <- function(input, output, session, rsim) {
       dplyr::mutate(PI = paste(Tissue, PI))
   }
   
-# Generate plotted ribbon from current and saved simulation data
+# Generate plotted ribbon from current and saved summary data
+# * try used when using ribbon_fn on Slines() to help protect from error
+#     + class(Sribbon()) == "try-error" when saved output is from a simulation
+#       with `rv$nid` == 1, while current output is from a simulation with
+#       `rv$nid` > 1.
   Rribbon <- reactive({
     ribbon_fn(Rlines())
   })
@@ -80,7 +92,7 @@ mod_plotsim_server <- function(input, output, session, rsim) {
     try(ribbon_fn(Slines()))
   })
 
-# Create main 
+# Create main plot to be displayed in the application
   output$mainplot <- renderPlot({
   # Define azithromycin IC90 (ng/mL)
     az_ic90 <- 6500  # TODO: do we want the user to access this?

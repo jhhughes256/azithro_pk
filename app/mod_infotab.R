@@ -1,7 +1,8 @@
 # Module UI
   
 #' @title   mod_infotab_ui and mod_infotab_server
-#' @description  A default shiny module
+#' @description  Shiny module which handles display of information in the About
+#' tabs.
 #'
 #' @param id shiny id
 #' @param input internal
