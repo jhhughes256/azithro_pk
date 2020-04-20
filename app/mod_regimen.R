@@ -45,7 +45,7 @@ mod_regimen_ui <- function(id) {
     br(),
     sliderInput(ns("nid"), "Number of Individuals for Simulation:",
       value = 1, min = 1, max = 1000, step = 1, width = "90%"),
-    footer = mod_simulate_ui(paste(id, "sim", sep = "-")),  # gotta rememeber to add parent to namespace for nested modules!!!
+    footer = mod_simulate_ui(ns("sim")),  # gotta rememeber to add parent to namespace for nested modules!!!
     status = "success", solidHeader = TRUE
   )  # box
 }  # mod_regimen_ui
@@ -129,15 +129,16 @@ mod_regimen_server <- function(input, output, session) {
   })  # reactive
   
 # Define reactive function containing input values
+# * try helps protect Rinput being called before dynamic input is generated
 # * map_dbl collects each input box value using standardised naming scheme
   Rinput <- reactive({
-    list(
+    try(list(
       amt = purrr::map_dbl(seq(1, rv$n, by = 1), ~ input[[paste0("amt", .x)]]),
       int = purrr::map_dbl(seq(1, rv$n, by = 1), ~ input[[paste0("int", .x)]]),
       dur = purrr::map_dbl(seq(1, rv$n, by = 1), ~ input[[paste0("dur", .x)]]),
       bwt = input$bwt,
       nid = input$nid
-    )
+    ))
   })  # reactive
   
 # Observe add button for dynamic ui
