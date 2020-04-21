@@ -27,7 +27,7 @@ mod_regimen_ui <- function(id) {
 # * action buttons "add" and "remove" are observed, interact with dynamic UI
 # * selectInput choices are observed, interact with dynamic UI
   box(width = "100%", title = "Regimen Information", align = "center",
-    h4(strong("Patient Characteristics")), br(),
+    h4(strong("Patient Population")), br(),
     shinyWidgets::sliderTextInput(ns("nid"), 
       label = "Number of Individuals for Simulation:",
       choices = c(1, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000), 
@@ -180,7 +180,7 @@ mod_regimen_server <- function(input, output, session) {
         ec50 = Recref()$ec50,
         ec90 = Recref()$ec90,
         nid = as.double(input$nid),
-        reg = input$choose
+        choose = input$choose
       )
   })  # reactive
   

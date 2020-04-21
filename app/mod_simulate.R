@@ -55,6 +55,7 @@ mod_simulate_server <- function(input, output, session, Rinput, rv) {
   
 # Observe simulate button, when pressed:
 # * check to make sure that Rinput() has been called successfully
+# * if regimen is user-defined save current Rinput() values to `rv`
 # * run fct_simulate_model with the input from Rinput() and store in current 
 #   output `rsim$out`
 # * if Rinput() wasn't called successfully, let user know that they clicked the
@@ -62,9 +63,11 @@ mod_simulate_server <- function(input, output, session, Rinput, rv) {
   observeEvent(input$sim, {
     if (!"try-error" %in% class(Rinput())) {
     # Save current Rinput values to rv if required
-      names <- c("amt", "int", "dur")
-      index <- seq(1, rv$n, by = 1)
-      purrr::walk(names, ~ { rv[[.x]][index] <- na.omit(Rinput()[[.x]][index]) })
+      # if (Rinput()$choose == "0") {
+      #   names <- c("amt", "int", "dur")
+      #   index <- seq(1, rv$n, by = 1)
+      #   purrr::walk(names, ~ { rv[[.x]][index] <- na.omit(Rinput()[[.x]][index]) })
+      # }
     # Simulate from model
       rsim$out <- fct_simulate_model(Rinput(), session)
     } else {
