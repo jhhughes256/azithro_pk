@@ -3,7 +3,7 @@ app_ui <- function() {
 # Define ui functions 
   dashboardPage(
   # Header  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    header = dashboardHeader(title = "Azithromycin PK Simulator"),
+    header = dashboardHeader(title = "Azithromycin PK Simulator", titleWidth = 300),
   # Sidebar - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     sidebar = dashboardSidebar(
       sidebarMenu(
@@ -13,7 +13,7 @@ app_ui <- function() {
           menuSubItem("Resources", tabName = "resources", icon = icon("desktop"))
         ) # menuItem
       ),  # sidebarMenu
-      width = 150, collapsed = TRUE
+      width = 300, collapsed = TRUE
     ),  # dashboardSidebar
   # Body  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     body = dashboardBody(
@@ -26,11 +26,11 @@ app_ui <- function() {
         tabItem(tabName = "simulate",
           fluidRow(  # removes shinydashboard background issues
           # Dosing Input
-            div(class = "col-xs-12 col-sm-6 col-md-6 col-lg-4",  # define layout widths
+            div(class = "col-sm-6 col-lg-4",  # define layout widths
               mod_regimen_ui("reg")
             ),  # div
           # Model Output
-            div(class = "col-xs-12 col-sm-6 col-md-6 col-lg-8",  # define layout widths
+            div(class = "col-sm-6 col-lg-8",  # define layout widths
               mod_plotsim_ui("poppk")
             )  # div
           )  # fluidRow

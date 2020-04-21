@@ -21,15 +21,19 @@ mod_simulate_ui <- function(id) {
   ns <- NS(id)
 # Create tagList to be used in the UI
 # * dashboardButton wrapper function can be found in `utils.R`
-  tagList(
+  div(align = "center",
     dashboardButton(ns("sim"), "Update Dosing Regimen",
-      status = "success"),  # dashboardButton
+      status = "warning", width = "100%"),  # dashboardButton
     br(), br(),  # spacing
-    div(style = "display:inline-block",
-      dashboardButton(ns("save"), "Save Current Output",
-        status = "success"),  # dashboardButton
-      dashboardButton(ns("clear"), "Clear Current Output",
-        status = "success")  # dashboardButton
+    fluidRow(
+      column(6,
+        dashboardButton(ns("save"), "Save Current Output",
+          status = "warning", width = "100%")  # dashboardButton
+      ),
+      column(6,
+        dashboardButton(ns("clear"), "Clear Current Output",
+          status = "warning", width = "100%")  # dashboardButton
+      )
     )  # div
   )  # tagList
 }  # mod_simulate_ui

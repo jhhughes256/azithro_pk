@@ -27,15 +27,18 @@ mod_regimen_ui <- function(id) {
 # * action buttons "add" and "remove" are observed, interact with dynamic UI
 # * selectInput choices are observed, interact with dynamic UI
   box(width = "100%", title = "Regimen Information", align = "center",
+    h4(strong("Patient Characteristics")), br(),
+    sliderInput(ns("nid"), "Number of Individuals for Simulation:",
+      value = 1, min = 1, max = 1000, step = 1, width = "90%"),
     numericInput(ns("bwt"), "Patient Body Weight (kg):",
       value = 79, min = 1, step = 0.1),
+    hr(), h4(strong("Azithromycin Treatment")), br(),
     selectInput(ns("choose"), "Select dosing regimen:",
       choices = c(
         "Days 1-3: 500 mg" = 1,
         "Day 1: 500mg; Days 2-5: 250 mg" = 2,
         "Day 1: 1000mg" = 3,
-        "Days 1-10: 500mg" = 4,
-        "Custom" = 0
+        "Days 1-10: 500mg" = 4
       ), selected = 1),
     uiOutput(ns("regimen")),
     br(),
@@ -44,10 +47,8 @@ mod_regimen_ui <- function(id) {
       actionButton(ns("rem"), "Remove")
     ),  # div
     br(),
-    sliderInput(ns("nid"), "Number of Individuals for Simulation:",
-      value = 1, min = 1, max = 1000, step = 1, width = "90%"),
     footer = mod_simulate_ui(ns("sim")),  # gotta rememeber to add parent to namespace for nested modules!!!
-    status = "success", solidHeader = TRUE
+    status = "warning", solidHeader = TRUE
   )  # box
 }  # mod_regimen_ui
 

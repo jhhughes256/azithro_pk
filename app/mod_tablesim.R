@@ -20,12 +20,12 @@ mod_tablesim_ui <- function(id) {
   ns <- NS(id)
 # Create tagList to be used in the UI
   tagList(
-    column(6,
+    div(class = "col-sm-12 col-md-6", align = "center",
       tableOutput(ns("tabout"))
-    ),  # column
-    column(6,
+    ),  # div
+    div(class = "col-sm-12 col-md-6", align = "center",
       tableOutput(ns("tabsave"))
-    )  # column
+    )  # div
   )  # tagList
 }  # mod_tablesim_ui
 

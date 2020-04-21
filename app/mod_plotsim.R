@@ -24,7 +24,7 @@ mod_plotsim_ui <- function(id) {
   box(width = "100%", title = "Azithromycin Concentrations", align = "center",
     plotOutput(ns("mainplot"), height = "450px"),
     footer = mod_tablesim_ui(ns("table")),
-    status = "primary", solidHeader = TRUE
+    status = "success", solidHeader = TRUE
   )  # box
 }  # mod_plotsim_ui
 
