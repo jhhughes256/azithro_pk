@@ -55,15 +55,14 @@ mod_simulate_server <- function(input, output, session, Rinput, rv) {
   
 # Observe simulate button, when pressed:
 # * check to make sure that Rinput() has been called successfully
-# * save current Rinput values to rv
 # * run fct_simulate_model with the input from Rinput() and store in current 
 #   output `rsim$out`
 # * if Rinput() wasn't called successfully, let user know that they clicked the
 #   simulation button a bit too quickly and should try again.
   observeEvent(input$sim, {
     if (!"try-error" %in% class(Rinput())) {
-    # Save current Rinput values to rv
-      names <- c("amt", "int", "dur", "bwt", "nid")
+    # Save current Rinput values to rv if required
+      names <- c("amt", "int", "dur")
       index <- seq(1, rv$n, by = 1)
       purrr::walk(names, ~ { rv[[.x]][index] <- na.omit(Rinput()[[.x]][index]) })
     # Simulate from model
@@ -73,23 +72,9 @@ mod_simulate_server <- function(input, output, session, Rinput, rv) {
     }
   })  # observeEvent
   
-# Observe save button, when pressed:
-# * check to make sure that Rinput() has been called successfully
-# * save current Rinput values to rv
-# * save current output for comparison `rsim$save`
-# * if Rinput() wasn't called successfully, let user know that they clicked the
-#   simulation button a bit too quickly and should try again.
+# Observe save button, when pressed save current output to `rsim$save`
   observeEvent(input$save, {
-    if (!"try-error" %in% class(Rinput())) {
-    # Save current Rinput values to rv
-      names <- c("amt", "int", "dur", "bwt", "nid")
-      index <- seq(1, rv$n, by = 1)
-      purrr::walk(names, ~ { rv[[.x]][index] <- na.omit(Rinput()[[.x]][index]) })
-    # Save current simulation output to rsim
-      rsim$save <- rsim$out
-    } else {
-      showNotification("Sorry you were a bit quick! Try again.", type = "warning")
-    }
+    rsim$save <- rsim$out
   })  # observeEvent
   
 # Observe clear button, when pressed clear current output from `rsim$save`

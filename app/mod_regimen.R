@@ -28,8 +28,10 @@ mod_regimen_ui <- function(id) {
 # * selectInput choices are observed, interact with dynamic UI
   box(width = "100%", title = "Regimen Information", align = "center",
     h4(strong("Patient Characteristics")), br(),
-    sliderInput(ns("nid"), "Number of Individuals for Simulation:",
-      value = 1, min = 1, max = 1000, step = 1, width = "90%"),
+    shinyWidgets::sliderTextInput(ns("nid"), 
+      label = "Number of Individuals for Simulation:",
+      choices = c(1, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000), 
+      grid = TRUE, width = "90%"),
     numericInput(ns("bwt"), "Patient Body Weight (kg):",
       value = 79, min = 1, step = 0.1),
     hr(), h4(strong("Azithromycin Treatment")), br(),
@@ -38,16 +40,32 @@ mod_regimen_ui <- function(id) {
         "Days 1-3: 500 mg" = 1,
         "Day 1: 500mg; Days 2-5: 250 mg" = 2,
         "Day 1: 1000mg" = 3,
-        "Days 1-10: 500mg" = 4
+        "Days 1-10: 500mg" = 4,
+        "User-Defined" = 0
       ), selected = 1),
-    uiOutput(ns("regimen")),
-    br(),
-    div(style = "display:in-line",
-      actionButton(ns("add"), "Add"),
-      actionButton(ns("rem"), "Remove")
-    ),  # div
-    br(),
-    footer = mod_simulate_ui(ns("sim")),  # gotta rememeber to add parent to namespace for nested modules!!!
+    conditionalPanel("input.choose == '0'", ns = ns,
+      uiOutput(ns("regimen")),
+      br(),
+      div(style = "display:in-line",
+        actionButton(ns("add"), "Add"),
+        actionButton(ns("rem"), "Remove")
+      )  # div
+    ),  # conditionalPanel
+    hr(), h4(strong("In Vitro EC50 and EC90")), br(),
+    selectInput(ns("ecref"), "Select reference:",
+      choices = c(
+        "SARS-CoV-2 (Touret F et al. 2020)" = 1,
+        "User-Defined" = 0
+      ), selected = 1),
+    conditionalPanel("input.ecref == '0'", ns = ns,
+      column(6,
+        numericInput(ns("ec50"), "EC50 (ng/mL):", value = 1600)
+      ),  # column
+      column(6,
+        numericInput(ns("ec90"), "EC90 (ng/mL):", value = 6500)
+      )  # column
+    ),  # conditionalPanel
+    footer = mod_simulate_ui(ns("sim")), 
     status = "warning", solidHeader = TRUE
   )  # box
 }  # mod_regimen_ui
@@ -62,7 +80,7 @@ mod_regimen_server <- function(input, output, session) {
 # Define namespace function for IDs
   ns <- session$ns
   
-# Create reactiveValues object to store input values
+# Create reactiveValues object to store renderUI input values
 # * n is the number of dosing regimens 
 #     + it dictates the number of rendered input boxes as well as how many
 #       amt, int and dur values are used when passing to the model using `ev`
@@ -70,15 +88,11 @@ mod_regimen_server <- function(input, output, session) {
 #   first, second and third dosing regimen, pasted to `ev`
 #     + if no second or third dosing regimen exists, values in those positions
 #       are ignored
-# * bwt is passed to the model using `param`
-# * nid is the number of individuals to simulate
   rv <- reactiveValues(
     n = 1,  # number of rendered input boxes (min: 1, max: 3)
     amt = rep(500, 3),
     int = rep(24, 3),
-    dur = rep(3, 3),
-    bwt = 79,
-    nid = 1
+    dur = rep(3, 3)
   )
   
 # Define reactive function for dynamic input box ui
@@ -130,17 +144,44 @@ mod_regimen_server <- function(input, output, session) {
     })  # map
   })  # reactive
   
+# Define reactive function containing EC50 & EC90 values based on input
+# * Define literature values in vitro effective concentrations `ecref_lst`
+# * If reference EC value is selected, use `input$ecref` as index for `ecref_lst`
+# * Else if user-defined value is provided 
+  Recref <- reactive({
+    ecref_lst <- list(
+      "1" = list(ec50 = 1600, ec90 = 6500)  # Touret F et al. 2020
+    )  # ecref_lst
+    if (input$ecref != "0") {
+      return(ecref_lst[[input$ecref]])
+    } else if (input$ecref == "0") {
+      return(list(ec50 = input$ec50, ec90 = input$ec90))
+    }
+  })
+  
 # Define reactive function containing input values
 # * try helps protect Rinput being called before dynamic input is generated
+# * when allows for the use of Rinput() for simulation, which helps when having
+#   user-defined regimens
 # * map_dbl collects each input box value using standardised naming scheme
   Rinput <- reactive({
-    try(list(
-      amt = purrr::map_dbl(seq(1, rv$n, by = 1), ~ input[[paste0("amt", .x)]]),
-      int = purrr::map_dbl(seq(1, rv$n, by = 1), ~ input[[paste0("int", .x)]]),
-      dur = purrr::map_dbl(seq(1, rv$n, by = 1), ~ input[[paste0("dur", .x)]]),
-      bwt = input$bwt,
-      nid = input$nid
-    ))
+    input$choose %>%
+      purrr::when(
+        . == "0" ~ try(list(
+          amt = purrr::map_dbl(seq(1, rv$n, by = 1), ~ input[[paste0("amt", .x)]]),
+          int = purrr::map_dbl(seq(1, rv$n, by = 1), ~ input[[paste0("int", .x)]]),
+          dur = purrr::map_dbl(seq(1, rv$n, by = 1), ~ input[[paste0("dur", .x)]]))),
+        . != "0" ~ try(list(
+          amt = purrr::map_dbl(seq(1, rv$n, by = 1), ~ rv$amt[[.x]]),
+          int = purrr::map_dbl(seq(1, rv$n, by = 1), ~ rv$int[[.x]]),
+          dur = purrr::map_dbl(seq(1, rv$n, by = 1), ~ rv$dur[[.x]])))) %>%
+      purrr::list_modify(
+        bwt = input$bwt,
+        ec50 = Recref()$ec50,
+        ec90 = Recref()$ec90,
+        nid = as.double(input$nid),
+        reg = input$choose
+      )
   })  # reactive
   
 # Observe add button for dynamic ui
@@ -167,6 +208,7 @@ mod_regimen_server <- function(input, output, session) {
 # * Based on the selection, update the value of `rv$n` based on desired preset
 # * Using the new `rv$n` value to define the index, update `rv` dosing values
   observeEvent(input$choose, {
+    rv$reg <- input$choose
     rv$n <- dplyr::case_when(
       as.double(input$choose) %in% c(1, 3, 4) ~ 1,
       as.double(input$choose) == 2 ~ 2,
