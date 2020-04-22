@@ -22,7 +22,15 @@ mod_plotsim_ui <- function(id) {
 # Create tagList to be used in the UI
 # * box width according to parent div
   box(width = "100%", title = "Azithromycin Concentrations", align = "center",
-    plotOutput(ns("mainplot"), height = "450px"),
+    div(
+      plotOutput(ns("mainplot"), height = "450px"), 
+      title = paste("Solid and dashed lines represent the median predictions of",
+        "the current and saved regimen. When simulating multiple individuals", 
+        "the shaded areas (from darkest to lightest) represent the 20, 40, 60,", 
+        "80 and 90% prediction intervals of the current regimen, while the", 
+        "upper and lower dashed lines represent the 90% prediction intervals", 
+        "of the saved regimen.")
+    ),  # div
     footer = mod_tablesim_ui(ns("table")),
     status = "success", solidHeader = TRUE
   )  # box
