@@ -41,6 +41,8 @@ mod_tablesim_server <- function(input, output, session, rsim) {
   
 # Define function for generating application tables
   fct_tabgen <- function(rsim, label, mod) {
+    # if (length(unique(rsim$ID)) > 1) browser()
+    metric <- ifelse(length(unique(rsim$ID)) == 1, "Value", "Median Value")
     rsim %>%
       purrr::when(
         !is.null(.) ~ rsim %>%
@@ -48,8 +50,10 @@ mod_tablesim_server <- function(input, output, session, rsim) {
           dplyr::mutate_at(dplyr::vars(tidyselect::contains("TEC")), 
             magrittr::divide_by, 24) %>%
           dplyr::mutate_at(dplyr::vars(tidyselect::contains("TEC")), round, 1) %>%
-          dplyr::mutate(AZEC50 = mod$AZEC50, AZEC90 = mod$AZEC90) %>%
+          dplyr::summarise_all(median) %>%
+          dplyr::mutate(NID = length(unique(rsim$ID))) %>%
           dplyr::select(
+            "Number of Individuals" = NID,
             "EC50 (ng/mL)" = AZEC50,
             "Time above EC50 in AM (days)" = ALMATEC50,
             "Time above EC50 in lung (days)" = LUNGTEC50,
@@ -58,14 +62,15 @@ mod_tablesim_server <- function(input, output, session, rsim) {
             "Time above EC90 in lung (days)" = LUNGTEC90) %>%
           dplyr::mutate_all(as.character),
         is.null(.) ~ tibble::tibble(
-          "EC50 (ng/mL)" = as.character(mod$AZEC50),
+          "Number of Individuals" = "-",
+          "EC50 (ng/mL)" = "-",
           "Time above EC50 in AM (days)" = "-",
           "Time above EC50 in lung (days)" = "-",
-          "EC90 (ng/mL)" = as.character(mod$AZEC90),
+          "EC90 (ng/mL)" = "-",
           "Time above EC90 in AM (days)" = "-",
           "Time above EC90 in lung (days)" = "-")) %>%
       tidyr::pivot_longer(cols = tidyselect::everything(), 
-        names_to = label, values_to = "Value")
+        names_to = label, values_to = metric)
   }
 
 # Render tables to be displayed in the application

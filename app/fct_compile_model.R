@@ -213,6 +213,7 @@ $CAPTURE
   CLUNG CALMAC CALMACT CALMAT CALMALT // Individual Predictions
   FU CLF VCF KIN DFMUSC DFSUBC DFWBCC  // Individual Parameters
   ETA1 ETA2 ETA3 ETA4 ETA5 ETA6  // Inter-individual Variability  
+  AZEC50 AZEC90  // AZ Effective Concentration
 '
   
 # Compile model and store in session userData so it can be accessed anywhere

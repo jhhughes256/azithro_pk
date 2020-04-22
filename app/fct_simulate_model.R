@@ -47,14 +47,14 @@ fct_simulate_model <- function(input, session) {
 # * Simulate model
   mrgendtime <- 504  # TODO: do we want the user to access this?
   mrgout <- mod %>%
-    mrgsolve::param(WT = input$bwt) %>%
+    mrgsolve::param(WT = input$bwt, AZEC50 = input$ec50, AZEC90 = input$ec90) %>%
     mrgsolve::ev(amt = dose_ev$amt, time = dose_ev$time) %>%
     purrr::when(
       input$nid == 1 ~ .,
       input$nid > 1 ~ mrgsolve::idata_set(., mrgidata)) %>%
     mrgsolve::mrgsim_df(end = mrgendtime, delta = mrgendtime/300, 
       Request = c("CPLAST", "CLUNG", "CWBCT", "CALMAT", 
-        "ALMATEC50", "LUNGTEC50", "ALMATEC90", "LUNGTEC90")
+        "AZEC50", "AZEC90", "ALMATEC50", "LUNGTEC50", "ALMATEC90", "LUNGTEC90")
     )  # mrgsim_df
   
 # Return model simulations as output
