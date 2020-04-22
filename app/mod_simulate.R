@@ -31,7 +31,7 @@ mod_simulate_ui <- function(id) {
           status = "warning", width = "100%")  # dashboardButton
       ),
       column(6,
-        dashboardButton(ns("clear"), "Clear Current Output",
+        dashboardButton(ns("clear"), "Clear Saved Output",
           status = "warning", width = "100%")  # dashboardButton
       )
     )  # div
