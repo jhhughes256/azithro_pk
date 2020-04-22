@@ -28,7 +28,13 @@ mod_tablesim_ui <- function(id) {
     div(class = "col-sm-12 col-md-6", align = "center",
       uiOutput(ns("regsave")),
       tableOutput(ns("tabsave"))
-    )  # div
+    ),  # div
+    column(12,
+      p(paste("Abbreviations: AM - alveolar macrophage; PI - prediction interval;", 
+      "EC50: 50% effective concentration; EC90: 90% effective concentration;",
+      "WBC: white blood cell predictions for polymorphonuclear leukocytes,",
+      "mononuclear leukocytes and peripheral blood monocytes."))
+    )  # column
   )  # tagList
 }  # mod_tablesim_ui
 
@@ -106,16 +112,29 @@ mod_tablesim_server <- function(input, output, session, rsim) {
 #     + Produce a table for display
 # * Otherwise when mrgsolve output is NULL produce an empty table
   fct_tabgen <- function(rsim, label, mod) {
-    metric <- ifelse(length(unique(rsim$ID)) > 1, "Median Value", "Value")
+    nid <- length(unique(rsim$ID))
+    metric <- ifelse(nid > 1, "Median (90% PI)", "Value")
     rsim %>%
       purrr::when(
         !is.null(.) ~ rsim %>%
           dplyr::filter(time == max(time)) %>%
+          dplyr::select(tidyselect::contains("EC")) %>%
           dplyr::mutate_at(dplyr::vars(tidyselect::contains("TEC")), 
             magrittr::divide_by, 24) %>%
           dplyr::mutate_at(dplyr::vars(tidyselect::contains("TEC")), round, 1) %>%
-          dplyr::summarise_all(median) %>%
-          dplyr::mutate(NID = length(unique(rsim$ID))) %>%
+          dplyr::group_by(AZEC50, AZEC90) %>%
+          dplyr::summarise_all(plot_summary_fn(ifelse(nid > 1, 0.9, NA))) %>%
+          purrr::when(
+            nid != 1 ~ tidyr::pivot_longer(., tidyselect::contains("TEC")) %>%
+              tidyr::separate("name", c("metric", "stat"), sep = "_") %>%
+              tidyr::pivot_wider(names_from = "stat", values_from = "value") %>%
+              dplyr::mutate(value = paste0(
+                median, " (", round(pi90lo, 1), " - ", round(pi90hi, 1), ")")) %>%
+              dplyr::select(-median, -pi90lo, -pi90hi) %>%
+              tidyr::pivot_wider(names_from = "metric", values_from = "value"),
+            nid == 1 ~ .) %>%
+          dplyr::ungroup() %>%
+          dplyr::mutate(NID = nid) %>%
           dplyr::select(
             "Number of Individuals" = NID,
             "EC50 (ng/mL)" = AZEC50,
