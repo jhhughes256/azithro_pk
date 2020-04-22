@@ -32,8 +32,16 @@ mod_regimen_ui <- function(id) {
       label = "Number of Individuals for Simulation:",
       choices = c(1, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000), 
       grid = TRUE, width = "90%"),
-    numericInput(ns("bwt"), "Patient Body Weight (kg):",
-      value = 79, min = 1, step = 0.1),
+    div(
+      column(6,
+        numericInput(ns("bwt"), "Patient Body Weight (kg):",
+          value = 79, min = 1, step = 0.1)
+      ),  # column
+      column(6,
+        numericInput(ns("endtime"), "Simulation Duration (days):",
+          value = 21, min = 7, max = 84, step = 1)
+      )  # column
+    ),  # fluidRow
     hr(), h4(strong("Azithromycin Treatment")), br(),
     selectInput(ns("choose"), "Select dosing regimen:",
       choices = c(
@@ -180,7 +188,8 @@ mod_regimen_server <- function(input, output, session) {
         ec50 = Recref()$ec50,
         ec90 = Recref()$ec90,
         nid = as.double(input$nid),
-        choose = input$choose
+        choose = input$choose,
+        endtime = input$endtime
       )
   })  # reactive
   

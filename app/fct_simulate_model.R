@@ -45,14 +45,13 @@ fct_simulate_model <- function(input, session) {
 # * Dosing records set to values from input
 # * If more than one subject was simulated, include random ETA values
 # * Simulate model
-  mrgendtime <- 504  # TODO: do we want the user to access this?
   mrgout <- mod %>%
     mrgsolve::param(WT = input$bwt, AZEC50 = input$ec50, AZEC90 = input$ec90) %>%
     mrgsolve::ev(amt = dose_ev$amt, time = dose_ev$time) %>%
     purrr::when(
       input$nid == 1 ~ .,
       input$nid > 1 ~ mrgsolve::idata_set(., mrgidata)) %>%
-    mrgsolve::mrgsim_df(end = mrgendtime, delta = mrgendtime/300, 
+    mrgsolve::mrgsim_df(end = 24*input$endtime, delta = 24*input$endtime/300, 
       Request = c("CPLAST", "CLUNG", "CWBCT", "CALMAT", 
         "AZEC50", "AZEC90", "ALMATEC50", "LUNGTEC50", "ALMATEC90", "LUNGTEC90")
     )  # mrgsim_df
