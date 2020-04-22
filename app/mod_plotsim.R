@@ -44,7 +44,7 @@ mod_plotsim_server <- function(input, output, session, rsim) {
 # * plot_summary_fn can be found in utils.R
   fct_plotlines <- function(rsim, plot_summary_arg) {
     rsim %>%
-      dplyr::select(-tidyselect::contains("TEC")) %>%
+      dplyr::select(-tidyselect::contains("EC")) %>%
       dplyr::mutate(time = time/24) %>%
       tidyr::pivot_longer(cols = -c("ID", "time"),
         names_to = "Tissue", values_to = "DV") %>%
@@ -95,8 +95,6 @@ mod_plotsim_server <- function(input, output, session, rsim) {
 
 # Create main plot to be displayed in the application
   output$mainplot <- renderPlot({
-  # Define azithromycin IC90 (ng/mL)
-    az_ic90 <- 6500  # TODO: do we want the user to access this?
   # Only produce plot if simulation has occurred
     if (!is.null(rsim$out)) {  # if simulation has occurred
     # Define plot
@@ -108,9 +106,16 @@ mod_plotsim_server <- function(input, output, session, rsim) {
         p <- p + ggplot2::geom_ribbon(ggplot2::aes(x = time, ymin = lo, ymax = hi, 
           group = PI, fill = Tissue), alpha = 0.1, data = Rribbon())
       }
-    # Azithromycin Model saved predictions
+    # Azithromycin SARS-CoV-2 current EC50 & EC90
+      az_ec50 <- unique(rsim$out$AZEC50)
+      az_ec90 <- unique(rsim$out$AZEC90)
+      p <- p + ggplot2::geom_hline(yintercept = az_ec50, linetype = "dotted")
+      p <- p + ggplot2::geom_hline(yintercept = az_ec90, linetype = "dashed")
+      p <- p + ggplot2::geom_text(x = 21, y = log10(az_ec50) + 0.2, label = "EC50")
+      p <- p + ggplot2::geom_text(x = 21, y = log10(az_ec90) + 0.2, label = "EC90")
     # Display if simulation output has been saved, and isn't identical to current output
       if (!is.null(rsim$save) & !isTRUE(all.equal(rsim$save, rsim$out))) {
+      # Azithromycin Model saved predictions
         p <- p + ggplot2::geom_line(ggplot2::aes(x = time, y = median, 
           colour = Tissue), size = 1, linetype = "dashed", data = Slines())
         if (length(unique(rsim$out$ID)) > 1 & !"try-error" %in% class(Sribbon())) {  # If nid > 1
@@ -120,11 +125,13 @@ mod_plotsim_server <- function(input, output, session, rsim) {
           p <- p + ggplot2::geom_line(ggplot2::aes(x = time, y = hi, 
             colour = Tissue), size = 1, alpha = 0.7, linetype = "dotted", 
             data = Sribbon())
-        }
+        }  # end if nid > 1
+      # Azithromycin SARS-CoV-2 saved EC50 & EC90
+        Saz_ec50 <- unique(rsim$save$AZEC50)
+        Saz_ec90 <- unique(rsim$save$AZEC90)
+        p <- p + ggplot2::geom_hline(yintercept = Saz_ec50, linetype = "dotted", alpha = 0.4)
+        p <- p + ggplot2::geom_hline(yintercept = Saz_ec90, linetype = "dashed", alpha = 0.4)
       }
-    # Azithromycin SARS-CoV-2 IC90
-      p <- p + ggplot2::geom_hline(yintercept = az_ic90, linetype = "dashed")
-      p <- p + ggplot2::geom_text(x = 21, y = log10(az_ic90) + 0.2, label = "EC90")
     # Axes
       p <- p + ggplot2::scale_y_log10(paste("Concentration (ng/mL)"),
         labels = scales::comma)
