@@ -50,39 +50,37 @@ mod_simulate_server <- function(input, output, session, Rinput, rv) {
 # * `rsim$save` contains the saved output from mrgsolve simulation
   rsim <- reactiveValues(
     out = NULL,
-    save = NULL
+    save = NULL,
+    out_reg = NULL,
+    save_reg = NULL
   )
   
 # Observe simulate button, when pressed:
 # * check to make sure that Rinput() has been called successfully
-# * if regimen is user-defined save current Rinput() values to `rv`
 # * run fct_simulate_model with the input from Rinput() and store in current 
 #   output `rsim$out`
 # * if Rinput() wasn't called successfully, let user know that they clicked the
 #   simulation button a bit too quickly and should try again.
   observeEvent(input$sim, {
     if (!"try-error" %in% class(Rinput())) {
-    # Save current Rinput values to rv if required
-      # if (Rinput()$choose == "0") {
-      #   names <- c("amt", "int", "dur")
-      #   index <- seq(1, rv$n, by = 1)
-      #   purrr::walk(names, ~ { rv[[.x]][index] <- na.omit(Rinput()[[.x]][index]) })
-      # }
-    # Simulate from model
       rsim$out <- fct_simulate_model(Rinput(), session)
+      rsim$out_reg <- Rinput()[c("amt", "int", "dur")]
     } else {
-      showNotification("Sorry you were a bit quick! Try again.", type = "warning")
+      showNotification("Sorry, the application wasn't ready for your input. Please try again.", 
+        type = "warning")
     }
   })  # observeEvent
   
 # Observe save button, when pressed save current output to `rsim$save`
   observeEvent(input$save, {
     rsim$save <- rsim$out
+    rsim$save_reg <- rsim$out_reg
   })  # observeEvent
   
 # Observe clear button, when pressed clear current output from `rsim$save`
   observeEvent(input$clear, {
     rsim$save <- NULL
+    rsim$save_reg <- NULL
   })  # observeEvent
   
 # Return rout object to parent module (mod_regimen_server)
