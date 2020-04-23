@@ -12,7 +12,8 @@ __Version:__ 0.9.9
 __Revisions:__
 
 * v0.0.9 17 April 2020 - Prototype
-* v0.9.9 23 April 2020 - Pre-QC Version
+* v0.9.8 23 April 2020 - Pre-QC Version
+* v0.9.9 23 April 2020 - First Round of QC
 
 ### Intended scope of use
 For simulation of azithromycin treatment regimens and comparison of model
