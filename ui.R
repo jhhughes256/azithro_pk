@@ -18,10 +18,6 @@ app_ui <- function() {
     ),  # dashboardSidebar
   # Body  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     body = dashboardBody(
-    # Customise style tags for slider input
-      tags$style(HTML(".irs-grid-text, .irs-min, .irs-max {color:#000000;
-        font-size:12px}")),
-      tags$style(HTML(".irs-single, .irs-from, .irs-to {font-size:12px}")),
       tabItems(
       # Tab 1 - Simulate
         tabItem(tabName = "simulate",

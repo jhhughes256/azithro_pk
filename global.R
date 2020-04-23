@@ -1,7 +1,7 @@
 # Import packages and utility functions ---------------------------------------
   library(shiny)
   library(shinydashboard)
-  source("utils.R")
+  `%>%` <- magrittr::`%>%`
 
 # Source in Shiny modules -----------------------------------------------------
   source("mod_regimen.R")
@@ -11,8 +11,18 @@
   source("mod_infotab.R")
 
 # Source in business logic ----------------------------------------------------
+# Utility
+  source("fct_dashboardButton.R")
+  source("fct_plot_summary.R")
+# Model
   source("fct_compile_model.R")
+  source("fct_print_model.R")
   source("fct_simulate_model.R")
+# Processes
+  source("fct_process_plotlines.R")
+  source("fct_process_plotribbons.R")
+  source("fct_process_table.R")
+  source("fct_process_regimentext.R")
 
 # Set PATH for mrgsolve and run app -------------------------------------------
   if(interactive()) {

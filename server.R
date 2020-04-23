@@ -16,7 +16,7 @@ app_server <- function(input, output, session) {
   callModule(mod_plotsim_server, "poppk", rsim = rsim)
   
 # Call module that handle info sub-tabs in the About tab
-  callModule(mod_infotab_server, "model", print_model_info(session$userData$mod))
+  callModule(mod_infotab_server, "model", fct_print_model(session$userData$mod))
   callModule(mod_infotab_server, "session", sessionInfo())
   callModule(mod_infotab_server, "doc", includeMarkdown("documentation.md"))
   

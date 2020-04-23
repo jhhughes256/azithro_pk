@@ -46,39 +46,20 @@ mod_plotsim_server <- function(input, output, session, rsim) {
 # Define namespace function for IDs
   ns <- session$ns
   
-# Create function for generating plotted lines from simulation data
-# * function is applied to both current and saved outputs
-# * removes TEC50 and TEC90 columns prior to processing
-# * plot_summary_fn can be found in utils.R
-  fct_plotlines <- function(rsim, plot_summary_arg) {
-    rsim %>%
-      dplyr::select(-tidyselect::contains("EC")) %>%
-      dplyr::mutate(time = time/24) %>%
-      tidyr::pivot_longer(cols = -c("ID", "time"),
-        names_to = "Tissue", values_to = "DV") %>%
-      dplyr::mutate(Tissue = factor(Tissue, 
-        labels = c("AM", "Lung", "Plasma", "WBC"))) %>%
-      dplyr::group_by(time, Tissue) %>%
-      purrr::when(
-        length(unique(.$ID)) == 1 ~ dplyr::summarise(., median = median(DV)),
-        length(unique(.$ID)) > 1 ~ dplyr::summarise_at(., "DV", 
-          plot_summary_fn(plot_summary_arg))
-      ) %>%
-      dplyr::ungroup()
-  }
+
   
 # Generate plotted line from current and saved simulation data
 # * generate 90%, 80%, 60%, 40% and 20% prediction intervals for current output
 # * generate 90% prediction intervals for saved output
   Rlines <- reactive({
-    fct_plotlines(rsim$out, c(0.9, 0.8, 0.6, 0.4, 0.2))
+    fct_process_plotlines(rsim$out, c(0.9, 0.8, 0.6, 0.4, 0.2))
   })
   Slines <- reactive({
-    fct_plotlines(rsim$save, c(0.9))
+    fct_process_plotlines(rsim$save, c(0.9))
   })
   
 # Create function for extracting prediction intervals from summary data
-  fct_plotribbons <- function(lines) {
+  fct_process_plotribbons <- function(lines) {
     lines %>%
       dplyr::select(time, Tissue, tidyselect::contains("pi")) %>%
       tidyr::pivot_longer(cols = tidyselect::contains("pi"), 
@@ -95,10 +76,10 @@ mod_plotsim_server <- function(input, output, session, rsim) {
 #       with `rv$nid` == 1, while current output is from a simulation with
 #       `rv$nid` > 1.
   Rribbon <- reactive({
-    fct_plotribbons(Rlines())
+    fct_process_plotribbons(Rlines())
   })
   Sribbon <- reactive({
-    try(fct_plotribbons(Slines()))
+    try(fct_process_plotribbons(Slines()))
   })
 
 # Create main plot to be displayed in the application

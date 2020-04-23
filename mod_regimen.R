@@ -27,6 +27,14 @@ mod_regimen_ui <- function(id) {
 # * action buttons "add" and "remove" are observed, interact with dynamic UI
 # * selectInput choices are observed, interact with dynamic UI
   box(width = "100%", title = "Regimen Information", align = "center",
+  # Customise style tags for slider input
+    tags$style(HTML(".irs-grid-text, .irs-min, .irs-max {color:#000000;
+      font-size:12px}")),
+    tags$style(HTML(".irs-single, .irs-from, .irs-to {font-size:12px}")),
+    tags$style(HTML(".irs-single, .irs-bar-edge, .irs-bar {background: #F39C12}")),
+    tags$style(HTML(".irs-bar {border-top: #F39C12; border-bottom: #F39C12}")),
+    tags$style(HTML(".irs-bar-edge {border: #F39C12}")),
+  # Begin UI content
     h4(strong("Patient Population")), br(),
     shinyWidgets::sliderTextInput(ns("nid"), 
       label = "Number of Individuals for Simulation:",
