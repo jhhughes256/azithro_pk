@@ -247,7 +247,7 @@ mod_regimen_server <- function(input, output, session) {
   
 # Call module responsible for simulation and pass in inputs
 # Assign output from module to rsim
-  rsim <- callModule(mod_simulate_server, "sim", Rinput = Rinput, rv = rv)
+  rsim <- callModule(mod_simulate_server, "sim", Rinput = Rinput)
   
 # Return rsim object (from mod_simulate_server) to parent (app_server) 
   return(rsim)

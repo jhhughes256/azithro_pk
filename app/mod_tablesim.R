@@ -111,7 +111,7 @@ mod_tablesim_server <- function(input, output, session, rsim) {
 #     + Determine the median of all columns (for simulation of multiple IDs)
 #     + Produce a table for display
 # * Otherwise when mrgsolve output is NULL produce an empty table
-  fct_tabgen <- function(rsim, label, mod) {
+  fct_tabgen <- function(rsim, label) {
     nid <- length(unique(rsim$ID))
     metric <- ifelse(nid > 1, "Median (90% PI)", "Value")
     rsim %>%
@@ -158,10 +158,10 @@ mod_tablesim_server <- function(input, output, session, rsim) {
 
 # Render tables to be displayed in the application
   output$tabout <- renderTable({
-    fct_tabgen(rsim$out, "Current Regimen", session$userData$mod)
+    fct_tabgen(rsim$out, "Current Regimen")
   })
   output$tabsave <- renderTable({
-    fct_tabgen(rsim$save, "Saved Regimen", session$userData$mod)
+    fct_tabgen(rsim$save, "Saved Regimen")
   })
 
 }  # mod_tablesim_server

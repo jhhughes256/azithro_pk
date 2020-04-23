@@ -44,7 +44,7 @@ mod_simulate_ui <- function(id) {
 #' @export
 #' @keywords internal
 
-mod_simulate_server <- function(input, output, session, Rinput, rv) {
+mod_simulate_server <- function(input, output, session, Rinput) {
 # Create reactiveValues object to store simulation output
 # * `rsim$out` contains the current output from mrgsolve simulation
 # * `rsim$save` contains the saved output from mrgsolve simulation
