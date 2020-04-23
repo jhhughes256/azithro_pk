@@ -23,10 +23,4 @@
       "c:/program files/R/{Rversion}/bin/x64/;", "c:/RTools/bin/;",
       "c:/RTools/mingw_64/bin/;", Sys.getenv("PATH")
     )))  # Sys.setenv
-  # UI for application
-    source("ui.R")
-  # Server for application 
-    source("server.R")
-  # Run app
-    runApp(shinyApp(app_ui, app_server))
   }
