@@ -131,7 +131,7 @@ mod_tablesim_server <- function(input, output, session, rsim) {
               dplyr::mutate(value = paste0(median, " (", pi90lo, " - ", pi90hi, ")")) %>%
               dplyr::select(-median, -pi90lo, -pi90hi) %>%
               tidyr::pivot_wider(names_from = "metric", values_from = "value"),
-            nid == 1 ~ mutate_at(., dplyr::vars(-dplyr::group_cols()), round, 1)) %>%
+            nid == 1 ~ dplyr::mutate_at(., dplyr::vars(-dplyr::group_cols()), round, 1)) %>%
           dplyr::ungroup() %>%
           dplyr::mutate(NID = nid) %>%
           dplyr::select(
