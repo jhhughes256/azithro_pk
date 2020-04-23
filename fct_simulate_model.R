@@ -16,7 +16,7 @@
 
 fct_simulate_model <- function(input, session) {
 # Define dose regimen based on input values `amt`, `int` and `dur`
-  dose_ev <- purrr::map_dfr(seq_along(input$amt), function(i) {
+  dose_ev <- purrr::map_dfr(seq_along(1:input$n), function(i) {
     tibble::tibble(
       amt = rep(input$amt[[i]], 24*input$dur[[i]]/input$int[[i]]),
       tafo = 24*seq(0, input$dur[[i]] - input$int[[i]]/24, by = input$int[[i]]/24),

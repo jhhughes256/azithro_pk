@@ -121,18 +121,17 @@ mod_tablesim_server <- function(input, output, session, rsim) {
           dplyr::select(tidyselect::contains("EC")) %>%
           dplyr::mutate_at(dplyr::vars(tidyselect::contains("TEC")), 
             magrittr::divide_by, 24) %>%
-          dplyr::mutate_at(dplyr::vars(tidyselect::contains("TEC")), round, 1) %>%
           dplyr::group_by(AZEC50, AZEC90) %>%
           dplyr::summarise_all(plot_summary_fn(ifelse(nid > 1, 0.9, NA))) %>%
           purrr::when(
             nid != 1 ~ tidyr::pivot_longer(., tidyselect::contains("TEC")) %>%
               tidyr::separate("name", c("metric", "stat"), sep = "_") %>%
+              dplyr::mutate(value = round(value, 1)) %>%
               tidyr::pivot_wider(names_from = "stat", values_from = "value") %>%
-              dplyr::mutate(value = paste0(
-                median, " (", round(pi90lo, 1), " - ", round(pi90hi, 1), ")")) %>%
+              dplyr::mutate(value = paste0(median, " (", pi90lo, " - ", pi90hi, ")")) %>%
               dplyr::select(-median, -pi90lo, -pi90hi) %>%
               tidyr::pivot_wider(names_from = "metric", values_from = "value"),
-            nid == 1 ~ .) %>%
+            nid == 1 ~ dplyr::mutate_all(., round, 1)) %>%
           dplyr::ungroup() %>%
           dplyr::mutate(NID = nid) %>%
           dplyr::select(

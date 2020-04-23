@@ -44,7 +44,7 @@ mod_simulate_ui <- function(id) {
 #' @export
 #' @keywords internal
 
-mod_simulate_server <- function(input, output, session, Rinput) {
+mod_simulate_server <- function(input, output, session, Rinput, rv) {
 # Create reactiveValues object to store simulation output
 # * `rsim$out` contains the current output from mrgsolve simulation
 # * `rsim$save` contains the saved output from mrgsolve simulation
@@ -56,20 +56,53 @@ mod_simulate_server <- function(input, output, session, Rinput) {
   )
   
 # Observe simulate button, when pressed:
-# * check to make sure that Rinput() has been called successfully
+# * check to make sure that Rinput() has been called successfully, if it was...
+# * check to make sure that the dosing interval isn't greater than the dosing
+#   duration
+#     + if it is, set the duration to the dosing interval and provide a warning
+# * check to make sure that the dosing interval divides evenly into the dosing
+#   duration
+#     + if it doesn't, remove the remainder from the interval to obtain an 
+#       appropriate value and provide a warning
+#     + then run the simulation with an adjusted Rinput() list as it won't 
+#       be invalidated until the end of the observeEvent
 # * run fct_simulate_model with the input from Rinput() and store in current 
 #   output `rsim$out`
 # * if Rinput() wasn't called successfully, let user know that they clicked the
 #   simulation button a bit too quickly and should try again.
+# * ignoreNULL = FALSE ensures that it runs on Shiny app initiation
   observeEvent(input$sim, {
     if (!"try-error" %in% class(Rinput())) {
-      rsim$out <- fct_simulate_model(Rinput(), session)
-      rsim$out_reg <- Rinput()[c("amt", "int", "dur")]
-    } else {
-      showNotification("Sorry, the application wasn't ready for your input. Please try again.", 
-        type = "warning")
+    # Save current Rinput values to rv
+      names <- names(Rinput())
+      index <- purrr::map(names, function(name) {
+        if (name %in% c("amt", "int", "dur")) { seq(1, rv$n, by = 1) }
+        else { 1 } })
+      purrr::walk2(names, index, ~ { rv[[.x]][.y] <- na.omit(Rinput()[[.x]][.y]) })
     }
-  })  # observeEvent
+  # Check that dosing interval isn't greater than dosing duration
+    reg_check1 <- rv$int > (24*rv$dur)
+    if (any(reg_check1)) {
+      rv$dur[which(reg_check1)] <- rv$int[which(reg_check1)]/24
+      showNotification(paste("The dosing interval must be shorter than the",  
+        "dosing duration. Dosing duration was extended prior to simulation."), 
+        type = "error", duration = 30)
+    } 
+  # Check that dosing interval divides evenly into dosing duration
+    reg_check2 <- (24*rv$dur) %% rv$int
+    if (any(reg_check2 != 0)) {
+      rv$int[which(reg_check2 != 0)] <- rv$int[which(reg_check2 != 0)] %>%
+        magrittr::subtract(reg_check2[reg_check2 != 0])
+      showNotification(paste("The dosing interval must be a multiple of the",  
+        "dosing duration. Dosing interval was reduced prior to simulation."), 
+        type = "error", duration = 30)
+    }
+  # Run simulation
+    rsim$out <- fct_simulate_model(rv, session)
+    rsim$out_reg <- c("amt", "int", "dur") %>%
+      purrr::map(~ rv[[.x]][seq(1, rv$n, by = 1)]) %>%
+      magrittr::set_names(c("amt", "int", "dur"))
+  }, ignoreNULL = FALSE)  # observeEvent
   
 # Observe save button, when pressed save current output to `rsim$save`
   observeEvent(input$save, {

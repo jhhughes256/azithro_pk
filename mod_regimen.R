@@ -46,9 +46,9 @@ mod_regimen_ui <- function(id) {
     selectInput(ns("choose"), "Select dosing regimen:",
       choices = c(
         "Days 1-3: 500 mg" = 1,
-        "Day 1: 500mg; Days 2-5: 250 mg" = 2,
-        "Day 1: 1000mg" = 3,
-        "Days 1-10: 500mg" = 4,
+        "Day 1: 500 mg; Days 2-5: 250 mg" = 2,
+        "Day 1: 1000 mg" = 3,
+        "Days 1-10: 500 mg" = 4,
         "User-Defined" = 0
       ), selected = 1),
     conditionalPanel("input.choose == '0'", ns = ns,
@@ -100,7 +100,13 @@ mod_regimen_server <- function(input, output, session) {
     n = 1,  # number of rendered input boxes (min: 1, max: 3)
     amt = rep(500, 3),
     int = rep(24, 3),
-    dur = rep(3, 3)
+    dur = rep(3, 3),
+    bwt = 79,
+    ec50 = 1600,
+    ec90 = 6500,
+    nid = 1,
+    choose = "1",
+    endtime = 21
   )
   
 # Define reactive function for dynamic input box ui
@@ -247,7 +253,7 @@ mod_regimen_server <- function(input, output, session) {
   
 # Call module responsible for simulation and pass in inputs
 # Assign output from module to rsim
-  rsim <- callModule(mod_simulate_server, "sim", Rinput = Rinput)
+  rsim <- callModule(mod_simulate_server, "sim", Rinput = Rinput, rv = rv)
   
 # Return rsim object (from mod_simulate_server) to parent (app_server) 
   return(rsim)
