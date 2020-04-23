@@ -119,8 +119,10 @@ mod_plotsim_server <- function(input, output, session, rsim) {
       az_ec90 <- unique(rsim$out$AZEC90)
       p <- p + ggplot2::geom_hline(yintercept = az_ec50, linetype = "dotted")
       p <- p + ggplot2::geom_hline(yintercept = az_ec90, linetype = "dashed")
-      p <- p + ggplot2::geom_text(x = 21, y = log10(az_ec50) + 0.2, label = "EC50")
-      p <- p + ggplot2::geom_text(x = 21, y = log10(az_ec90) + 0.2, label = "EC90")
+      p <- p + ggplot2::annotate(geom = "text", x = 21, y = exp(log(az_ec50) + 0.3), 
+        label = "EC50")
+      p <- p + ggplot2::annotate(geom = "text", x = 21, y = exp(log(az_ec90) + 0.3), 
+        label = "EC90")
     # Display if simulation output has been saved, and isn't identical to current output
       if (!is.null(rsim$save) & !isTRUE(all.equal(rsim$save, rsim$out))) {
       # Azithromycin Model saved predictions

@@ -1,8 +1,10 @@
 #' @import shiny shinydashboard
 app_server <- function(input, output, session) {
 # Set ggplot2 theme
-  theme_bw2 <- ggplot2::theme_set(ggplot2::theme_bw(base_size = 14))
+  theme_bw2 <- ggplot2::theme_set(ggplot2::theme_bw(base_size = 14, base_family = "sans"))
   ggplot2::theme_update(plot.title = ggplot2::element_text(hjust = 0.5))
+  ggplot2::update_geom_defaults("text", 
+    list(colour = "grey20", family = ggplot2::theme_get()$text$family))
   
 # Compile model on server start (model is stored at session$userData[["mod"]])
   fct_compile_model(session)
