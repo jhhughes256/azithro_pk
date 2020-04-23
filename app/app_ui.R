@@ -9,6 +9,7 @@ app_ui <- function() {
       sidebarMenu(
         menuItem("Simulate", tabName = "simulate", icon = icon("line-chart")),
         menuItem("About", tabName = "about", icon = icon("question-circle"),
+          menuSubItem("Documentation", tabName = "documentation", icon = icon("file")),
           menuSubItem("Model", tabName = "model", icon = icon("code")),
           menuSubItem("Resources", tabName = "resources", icon = icon("desktop"))
         ) # menuItem
@@ -35,13 +36,17 @@ app_ui <- function() {
             )  # div
           )  # fluidRow
         ), # tabItem
-      # Tab 2.1 - Model
-        tabItem(tabName = "model",
-          mod_infotab_ui("model")
+      # Tab 2.1 - Documentation
+        tabItem(tabName = "documentation",
+          mod_infotab_ui("doc")
         ), # tabItem
-      # Tab 2.2 - Resources
+      # Tab 2.2 - Model
+        tabItem(tabName = "model",
+          mod_infotab_ui("model", pre)
+        ), # tabItem
+      # Tab 2.3 - Resources
         tabItem(tabName = "resources",
-          mod_infotab_ui("session")
+          mod_infotab_ui("session", pre)
         ) # tabItem
       ) # tabItems
     )  # dashboardBody

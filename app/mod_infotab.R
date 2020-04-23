@@ -15,12 +15,12 @@
 #' @export 
 #' @import shiny
 
-mod_infotab_ui <- function(id) {
+mod_infotab_ui <- function(id, container = div) {
 # Define namespace function for IDs
   ns <- NS(id)
 # Create tagList to be used in the UI
   tagList(
-    pre(htmlOutput(ns("infotext")))
+    htmlOutput(ns("infotext"), container = container)
   )  # tagList
 }  # mod_infotab_ui
 
@@ -36,7 +36,7 @@ mod_infotab_server <- function(input, output, session, info) {
 
 # Provide session info as output
   output$infotext <- renderPrint({
-    print(info)
+    info
   })  # renderPrint
   
 }  # mod_infotab_server

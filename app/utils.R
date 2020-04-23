@@ -67,12 +67,13 @@ dashboardButton <- function(inputId, label, status, icon = NULL, width = NULL, s
 #' @export
 #' 
 print_model_info <- function(mod) {
+  mrgsolve::blocks(mod, MAIN, ODE, TABLE)
+  print("$PARAM")
   print(mrgsolve::param(mod))
   print("$OMEGA")
   print(mrgsolve::omat(mod))
   print("$SIGMA")
   print(mrgsolve::smat(mod))
-  mrgsolve::blocks(mod, MAIN, ODE, TABLE)
 }
 
 #
