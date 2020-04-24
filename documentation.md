@@ -24,6 +24,8 @@ model described in the manuscript:
 
 * Number of Individuals for Simulation, Patient Body Weight and Simulation
   Duration work as standard inputs for the simulation
+* Dosing Regimen and In Vitro EC50/EC90 work as standard inputs for the 
+  simulation, but also allow for user-defined input
 * Dosing Regimen Input allows for user-defined input
     + Select "User-Defined" from drop-down box
     + Type number values into dose amount, interval and duration boxes to adjust
@@ -50,8 +52,8 @@ model described in the manuscript:
   overlay of the in-vitro EC50 and EC90.
     + When saved simulation output exists, those predictions are displayed in 
       addition to the current simulation
-        - coloured solid lines and shaded areas represent the current simulation
-        - coloured dashed lines and dotted lines represent the saved simulation
+        - Coloured solid lines and shaded areas represent the current simulation
+        - Coloured dashed lines and dotted lines represent the saved simulation
     + When a different EC50 or EC90 was used for the saved simulation, a black
       dashed line with reduced opacity is used to represent the saved EC value
     + When Number of Individuals for Simulation is equal to 1 these predictions
@@ -80,27 +82,27 @@ model described in the manuscript:
 Displays `mrgsolve` model blocks for:
 
 * \$MAIN
-    + describes the calculation of base and additional model parameters using
+    + Describes the calculation of base and additional model parameters using
       the model estimates
-    + equivalent to \$PK in NONMEM
+    + Equivalent to \$PK in NONMEM
 * \$ODE 
-    + describes the computation of ordinary differential equations
-    + equivalent to \$DES in NONMEM
+    + Describes the computation of ordinary differential equations
+    + Equivalent to \$DES in NONMEM
 * \$TABLE 
-    + describes the conversion of differential equation output to predictions  
+    + Describes the conversion of differential equation output to predictions  
       and the addition of intra-individual error
-    + equivalent to \$ERROR in NONMEM
+    + Equivalent to \$ERROR in NONMEM
 * \$PARAM 
-    + describes the model estimates
-    + equivalent to \$THETA in NONMEM
+    + Describes the model estimates
+    + Equivalent to \$THETA in NONMEM
 * \$OMEGA
-    + describes the full matrix of variances and covariances used to model the
+    + Describes the full matrix of variances and covariances used to model the
       inter-individual variability
-    + equivalent to \$OMEGA in NONMEM
+    + Equivalent to \$OMEGA in NONMEM
 * \$SIGMA
-    + describes the full matrix of variances and covariances used to model the
+    + Describes the full matrix of variances and covariances used to model the
       intra-individual variability
-    + equivalent to \$SIGMA in NONMEM
+    + Equivalent to \$SIGMA in NONMEM
 
 ### Resource Tab
 
@@ -120,7 +122,7 @@ __Revisions:__
 
 * v0.0.9 17 April 2020 - Prototype
 * v0.9.8 23 April 2020 - Pre-QC Version
-* v0.9.9 23 April 2020 - First Round of QC
+* v0.9.9 24 April 2020 - First Round of QC
 
 ### Intended scope of use
 For simulation of azithromycin treatment regimens and comparison of model
@@ -143,10 +145,10 @@ Source code is available from the following sources:
 ### Pre-requisites
 This code requires the following packages in addition to shiny:
 
-* shinydashboard
-* shinyWidgets
-* tidyverse
-* mrgsolve
+* `shinydashboard`
+* `shinyWidgets`
+* `tidyverse`
+* `mrgsolve`
 
 ### Compliance with Pfizer policies
 No personally identifiable data is used within this application.
