@@ -1,8 +1,115 @@
 # Azithromycin Pharmacokinetic Simulation Shiny Application
+## Shiny Application Feature List
+### Simulation Tab
+
+The application uses the inputs in the left box as input to produce the outputs 
+in the right box. Outputs come from simulation of the population pharmacokinetic
+model described in the manuscript:
+
+*Hughes JH, Sweeney K, Ahadieh S, Ouellet D. Predictions of Systemic,*
+*Intracellular, and Lung Concentrations of Azithromycin with Different*
+*Dosing Regimens used in COVID-19 Clinical Trials.*
+
+* Update Dosing Regimen button begins the simulation using the current inputs
+    + A simulation occurs using the default values on starting the application
+    + Simulated values are displayed in the figure and table in the right box
+    + Dosing regimen will be checked and corrected for errors prior to simulation
+* Save Current Output button saves the current simulation, so that it can be 
+  compared with simulations made with different inputs
+    + Saved output is presented in the figure and table in the right box
+* Clear Saved Output buttons clears the saved simulation
+    + This removes saved output from figure and table in the right box
+    
+#### Simulation Inputs
+
+* Number of Individuals for Simulation, Patient Body Weight and Simulation
+  Duration work as standard inputs for the simulation
+* Dosing Regimen Input allows for user-defined input
+    + Select "User-Defined" from drop-down box
+    + Type number values into dose amount, interval and duration boxes to adjust
+      the simulated dosing regimen
+    + Press "Add" and "Remove" to add and remove additional rows for describing
+      the custom dosing regimen (maximum number of rows is 3)
+    + If dosing regimen has an error then a warning will be shown, and the error
+      will be corrected prior to simulation.
+        - When dosing interval is larger than dosing duration, dosing duration 
+          is changed to match the dosing interval
+        - If dosing interval doesn't divide evenly into dosing duration, the 
+          remainder from dividing the dosing duration by the dosing interval is 
+          subtracted from the dosing interval
+* In Vitro EC50 and EC90 allows for user-defined input
+    + Select "User-Defined" from drop-down box
+    + Type number values into EC50 and EC90 boxes to adjust values to match
+      updated EC values for SARS-CoV-2 or EC values for other microbials of
+      interest
+    
+#### Simulation Outputs
+
+* The figure represents the model predictions in alveolar macrophage, lung,
+  plasma and white blood cell compartments of the simulated model, with an 
+  overlay of the in-vitro EC50 and EC90.
+    + When saved simulation output exists, those predictions are displayed in 
+      addition to the current simulation
+        - coloured solid lines and shaded areas represent the current simulation
+        - coloured dashed lines and dotted lines represent the saved simulation
+    + When a different EC50 or EC90 was used for the saved simulation, a black
+      dashed line with reduced opacity is used to represent the saved EC value
+    + When Number of Individuals for Simulation is equal to 1 these predictions
+      represent the population typical prediction based on the model
+    + When Number of Individuals for Simulation is more than 1 these predictions
+      represent the median prediction (coloured solid/dashed line) and the 
+      prediction intervals (shaded area/dotted lines)
+        - The shaded area represents the 20, 40, 60, 80 and 90 percent 
+          prediction intervals of the current simulation
+        - The dotted line represents the 90 percent prediction intervals of the
+          saved simulation
+* The text above each table represents the dosing regimen used for the current
+  (left) and saved (right) simulation output.
+* The table presents the inputs for the current (left) and saved (right) 
+  simulation output
+    + The time above EC values for both alveolar macrophages and lung are 
+      determined during model simulation
+    + When Number of Individuals for Simulation is equal to 1 the time above EC 
+      values represent the population typical values
+    + When Number of Individuals for Simulation is more than 1 the time above EC 
+      values represent the median and 90 percent prediction intervals
+    + All time above EC values are rounded to a single decimal place
+
+### Model Tab
+
+Displays `mrgsolve` model blocks for:
+
+* \$MAIN
+    + describes the calculation of base and additional model parameters using
+      the model estimates
+    + equivalent to \$PK in NONMEM
+* \$ODE 
+    + describes the computation of ordinary differential equations
+    + equivalent to \$DES in NONMEM
+* \$TABLE 
+    + describes the conversion of differential equation output to predictions  
+      and the addition of intra-individual error
+    + equivalent to \$ERROR in NONMEM
+* \$PARAM 
+    + describes the model estimates
+    + equivalent to \$THETA in NONMEM
+* \$OMEGA
+    + describes the full matrix of variances and covariances used to model the
+      inter-individual variability
+    + equivalent to \$OMEGA in NONMEM
+* \$SIGMA
+    + describes the full matrix of variances and covariances used to model the
+      intra-individual variability
+    + equivalent to \$SIGMA in NONMEM
+
+### Resource Tab
+
+* Displays R session info providing information on:
+    + R version
+    + Loaded R packages
+    + R package versions
+
 ## RStudio Connect GxP Summary
-### Purpose of this document
-The purpose of this document is to provide supporting documentation to
-content uploaded to the GxP RStudio Connect servers.
 
 ### Version Information
 __Author/Maintainer:__ Jim H. Hughes
