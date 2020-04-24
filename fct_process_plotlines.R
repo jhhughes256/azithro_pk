@@ -17,7 +17,7 @@
 # * removes TEC50 and TEC90 columns prior to processing
 fct_process_plotlines <- function(rsim, plot_summary_arg) {
   rsim %>%
-    dplyr::select(-tidyselect::contains("EC")) %>%
+    dplyr::select(-tidyselect::contains("EC"), -tidyselect::contains("WT")) %>%
     dplyr::mutate(time = time/24) %>%
     tidyr::pivot_longer(cols = -c("ID", "time"),
       names_to = "Tissue", values_to = "DV") %>%

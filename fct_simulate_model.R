@@ -52,7 +52,7 @@ fct_simulate_model <- function(input, session) {
       input$nid == 1 ~ .,
       input$nid > 1 ~ mrgsolve::idata_set(., mrgidata)) %>%
     mrgsolve::mrgsim_df(end = 24*input$endtime, delta = 24*input$endtime/300, 
-      Request = c("CPLAST", "CLUNG", "CWBCT", "CALMAT", 
+      Request = c("WT", "CPLAST", "CLUNG", "CWBCT", "CALMAT", 
         "AZEC50", "AZEC90", "ALMATEC50", "LUNGTEC50", "ALMATEC90", "LUNGTEC90")
     )  # mrgsim_df
   

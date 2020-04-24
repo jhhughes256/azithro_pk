@@ -24,10 +24,10 @@ fct_process_table <- function(rsim, label) {
     purrr::when(
       !is.null(.) ~ rsim %>%
         dplyr::filter(time == max(time)) %>%
-        dplyr::select(tidyselect::contains("EC")) %>%
+        dplyr::select(tidyselect::contains("EC"), tidyselect::contains("WT")) %>%
         dplyr::mutate_at(dplyr::vars(tidyselect::contains("TEC")), 
           magrittr::divide_by, 24) %>%
-        dplyr::group_by(AZEC50, AZEC90) %>%
+        dplyr::group_by(AZEC50, AZEC90, WT) %>%
         dplyr::summarise_all(fct_plot_summary(ifelse(nid > 1, 0.9, NA))) %>%
         purrr::when(
           nid != 1 ~ tidyr::pivot_longer(., tidyselect::contains("TEC")) %>%
@@ -42,6 +42,7 @@ fct_process_table <- function(rsim, label) {
         dplyr::mutate(NID = nid) %>%
         dplyr::select(
           "Number of Individuals" = NID,
+          "Population Body Weight (kg)" = WT,
           "EC50 (ng/mL)" = AZEC50,
           "Time above EC50 in AM (days)" = ALMATEC50,
           "Time above EC50 in lung (days)" = LUNGTEC50,
@@ -51,6 +52,7 @@ fct_process_table <- function(rsim, label) {
         dplyr::mutate_all(as.character),
       is.null(.) ~ tibble::tibble(
         "Number of Individuals" = "-",
+        "Population Body Weight (kg)" = "-",
         "EC50 (ng/mL)" = "-",
         "Time above EC50 in AM (days)" = "-",
         "Time above EC50 in lung (days)" = "-",
