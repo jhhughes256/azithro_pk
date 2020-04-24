@@ -46,8 +46,6 @@ mod_plotsim_server <- function(input, output, session, rsim) {
 # Define namespace function for IDs
   ns <- session$ns
   
-
-  
 # Generate plotted line from current and saved simulation data
 # * generate 90%, 80%, 60%, 40% and 20% prediction intervals for current output
 # * generate 90% prediction intervals for saved output
@@ -57,18 +55,6 @@ mod_plotsim_server <- function(input, output, session, rsim) {
   Slines <- reactive({
     fct_process_plotlines(rsim$save, c(0.9))
   })
-  
-# Create function for extracting prediction intervals from summary data
-  fct_process_plotribbons <- function(lines) {
-    lines %>%
-      dplyr::select(time, Tissue, tidyselect::contains("pi")) %>%
-      tidyr::pivot_longer(cols = tidyselect::contains("pi"), 
-        names_to = "PI", values_to = "value") %>%
-      tidyr::separate(col = "PI", into = c("PI", "id"), sep = -2) %>%
-      tidyr::pivot_wider(id_cols = c("time", "Tissue", "PI"),
-        names_from = "id", values_from = "value") %>%
-      dplyr::mutate(PI = paste(Tissue, PI))
-  }
   
 # Generate plotted ribbon from current and saved summary data
 # * try used when using fct_plotribbons on Slines() to help protect from error
