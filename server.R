@@ -17,7 +17,7 @@ app_server <- function(input, output, session) {
   
 # Call module that handle info sub-tabs in the About tab
   callModule(mod_infotab_server, "model", fct_print_model(session$userData$mod))
-  callModule(mod_infotab_server, "session", sessionInfo())
+  # callModule(mod_infotab_server, "session", sessionInfo())
   callModule(mod_infotab_server, "doc", includeMarkdown("documentation.md"))
   
 }  # server

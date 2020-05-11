@@ -10,8 +10,8 @@ app_ui <- function() {
         menuItem("Simulate", tabName = "simulate", icon = icon("line-chart")),
         menuItem("About", tabName = "about", icon = icon("question-circle"),
           menuSubItem("Documentation", tabName = "documentation", icon = icon("file")),
-          menuSubItem("Model", tabName = "model", icon = icon("code")),
-          menuSubItem("Resources", tabName = "resources", icon = icon("desktop"))
+          menuSubItem("Model", tabName = "model", icon = icon("code"))#,
+          # menuSubItem("Resources", tabName = "resources", icon = icon("desktop"))
         ) # menuItem
       ),  # sidebarMenu
       width = 300, collapsed = TRUE
@@ -39,11 +39,11 @@ app_ui <- function() {
       # Tab 2.2 - Model
         tabItem(tabName = "model",
           mod_infotab_ui("model", pre)
-        ), # tabItem
+        )#, # tabItem
       # Tab 2.3 - Resources
-        tabItem(tabName = "resources",
-          mod_infotab_ui("session", pre)
-        ) # tabItem
+        # tabItem(tabName = "resources",
+        #   mod_infotab_ui("session", pre)
+        # ) # tabItem
       ) # tabItems
     )  # dashboardBody
   )  # dashboardPage

@@ -143,12 +143,13 @@ Source code is available from the following sources:
     + improve artifact ID: CP1:ST-4348083
 
 ### Pre-requisites
-This code requires the following packages in addition to shiny:
+This code runs on R version 3.6.1 and requires the following packages in 
+addition to shiny (v1.3.2):
 
-* `shinydashboard`
-* `shinyWidgets`
-* `tidyverse`
-* `mrgsolve`
+* `shinydashboard` - v0.7.1
+* `shinyWidgets` - v0.4.9
+* `tidyverse` - v1.2.1
+* `mrgsolve` - v0.9.2
 
 ### Compliance with Pfizer policies
 No personally identifiable data is used within this application.
