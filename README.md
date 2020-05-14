@@ -11,7 +11,7 @@ predictions in plasma, peripheral leukocytes, lung and alveolar macrophages to e
 
 This application is intended to aid dosing regimen selection for azithromycin in the treatment of COVID-19 conducted under the controlled environment of a registered clinical trial.
 
-To run the web application locally, open the `global.R` file using RStudio and click the Run button located at the top-centre of the window. The application uses the inputs in the left box as input to produce the outputs in the right box. Outputs come from simulation of the population pharmacokinetic model. 
+To run the web application locally, clone or download the repository to your computer. Open the `global.R` file using RStudio and click the Run button located at the top-centre of the window. The application uses the inputs in the left box as input to produce the outputs in the right box. Outputs come from simulation of the population pharmacokinetic model. 
 
 ### Disclaimer
 
