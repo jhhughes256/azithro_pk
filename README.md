@@ -11,6 +11,8 @@ predictions in plasma, peripheral leukocytes, lung and alveolar macrophages to e
 
 This application is intended to aid dosing regimen selection for azithromycin in the treatment of COVID-19 conducted under the controlled environment of a registered clinical trial.
 
+To run the web application locally, open the `global.R` file using RStudio and click the Run button located at the top-centre of the window. The application uses the inputs in the left box as input to produce the outputs in the right box. Outputs come from simulation of the population pharmacokinetic model. 
+
 ### Disclaimer
 
 Azithromycin is not approved by the FDA for treatment of COVID-19. No recommendations are made for the treatment of COVID-19 with azithromycin outside of a registered clinical trial.
@@ -19,7 +21,7 @@ While this web application allows the comparison of in-vitro effective concentra
 
 ## Manuscript Code
 
-The code within this repository also includes code used to produce the analyses and figures in the manuscript. This code describes:
+This repository also includes code used to produce the analyses and figures in the manuscript. This code describes:
 
 - the data preparation for digitised data used in the manuscript
 - the comparison of different models from literature and extension of these existing models
