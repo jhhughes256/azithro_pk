@@ -27,3 +27,5 @@ This repository also includes code used to produce the analyses and figures in t
 - the comparison of different models from literature and extension of these existing models
 - the simulations conducted using the final model
 - the sensitivity analyses conducted on the final model
+
+This code may require some changes to file names and directories to be run locally.
