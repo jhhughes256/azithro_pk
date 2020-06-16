@@ -116,29 +116,28 @@ Displays `mrgsolve` model blocks for:
 ### Version Information
 __Author/Maintainer:__ Jim H. Hughes
 
-__Version:__ 0.9.9
+__Version:__ 1.0.0
 
 __Revisions:__
 
 * v0.0.9 17 April 2020 - Prototype
-* v0.9.8 23 April 2020 - Pre-QC Version
-* v0.9.9 24 April 2020 - First Round of QC
+* v0.9.8 23 April 2020 - Pre-QC version
+* v0.9.9 24 April 2020 - First round of QC
+* v1.0.0 27 May 2020 - GitHub release
 
 ### Intended scope of use
 For simulation of azithromycin treatment regimens and comparison of model
 predictions to effective concentratrions of azithromycin by readers of the
 manuscript:
 
-*Hughes JH, Sweeney K, Ahadieh S, Ouellet D. Predictions of Systemic,*
-*Intracellular, and Lung Concentrations of Azithromycin with Different*
-*Dosing Regimens used in COVID-19 Clinical Trials.*
+*Hughes, J.H., Sweeney, K., Ahadieh, S. and Ouellet, D. (2020), Predictions of Systemic, Intracellular, and Lung Concentrations of Azithromycin with Different Dosing Regimens used in COVID‐19 Clinical Trials. CPT Pharmacometrics Syst. Pharmacol. [doi:10.1002/psp4.12537](https://ascpt.onlinelibrary.wiley.com/doi/abs/10.1002/psp4.12537)*
 
 ### Source Code
 Source code is available from the following sources:
 
 * Public GitHub Repository
-    + GitHub / jhhughes256 / azithro_pk / master / app
-    + https://github.com/jhhughes256/azithro_pk/tree/master/app
+    + GitHub / jhhughes256 / azithro_pk / master
+    + https://github.com/jhhughes256/azithro_pk/tree/master
 * Pfizer Internal Repository
     + improve artifact ID: CP1:ST-4348083
 
