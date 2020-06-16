@@ -20,7 +20,7 @@ model described in the manuscript:
     
 #### Simulation Inputs
 
-* Number of Individuals for Simulation, Patient Body Weight and Simulation
+* Population Size for Simulation, Mean Body Weight and Simulation
   Duration work as standard inputs for the simulation
 * Dosing Regimen and In Vitro EC50/EC90 work as standard inputs for the 
   simulation, but also allow for user-defined input

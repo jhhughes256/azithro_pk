@@ -37,12 +37,12 @@ mod_regimen_ui <- function(id) {
   # Begin UI content
     h4(strong("Patient Population")), br(),
     shinyWidgets::sliderTextInput(ns("nid"), 
-      label = "Number of Individuals for Simulation:",
-      choices = c(1, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000), 
+      label = "Population Size for Simulation:",
+      choices = c(20, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000), 
       grid = TRUE, width = "90%"),
     div(
       column(6,
-        numericInput(ns("bwt"), "Patient Body Weight (kg):",
+        numericInput(ns("bwt"), "Mean Body Weight (kg):",
           value = 79, min = 1, step = 0.1)
       ),  # column
       column(6,
