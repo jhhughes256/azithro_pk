@@ -114,7 +114,7 @@ Displays `mrgsolve` model blocks for:
 ### Version Information
 __Author/Maintainer:__ Jim H. Hughes
 
-__Version:__ 1.0.0
+__Version:__ 1.0.1
 
 __Revisions:__
 
@@ -122,6 +122,7 @@ __Revisions:__
 * v0.9.8 23 April 2020 - Pre-QC version
 * v0.9.9 24 April 2020 - First round of QC
 * v1.0.0 27 May 2020 - GitHub release
+* v1.0.1 16 June 2020 - pfizer.com release
 
 ### Intended scope of use
 For simulation of azithromycin treatment regimens and comparison of model
