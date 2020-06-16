@@ -4,6 +4,7 @@
   `%>%` <- magrittr::`%>%`
 
 # Source in Shiny modules -----------------------------------------------------
+  source("mod_disclaimer.R")
   source("mod_regimen.R")
   source("mod_simulate.R")
   source("mod_plotsim.R")

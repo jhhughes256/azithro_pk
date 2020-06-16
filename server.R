@@ -6,6 +6,9 @@ app_server <- function(input, output, session) {
   ggplot2::update_geom_defaults("text", 
     list(colour = "grey20", family = ggplot2::theme_get()$text$family))
   
+# Show modal at application boot
+  showModal(mod_disclaimer_ui("modal"))
+  
 # Compile model on server start (model is stored at session$userData[["mod"]])
   fct_compile_model(session)
   
