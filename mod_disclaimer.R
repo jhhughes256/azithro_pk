@@ -32,17 +32,7 @@ mod_disclaimer_ui <- function(id) {
     tagList(
       fluidRow(
         column(12,
-          p(paste("The application was developed for the simulation of azithromycin",
-            "treatment regimens based on the published manuscript:"), 
-            tags$blockquote(paste("Hughes, J.H., Sweeney, K., Ahadieh, S. and",
-              "Ouellet, D. (2020), Predictions of Systemic, Intracellular, and", 
-              "Lung Concentrations of Azithromycin with Different Dosing Regimens",
-              "used in COVID-19 Clinical Trials. CPT Pharmacometrics Syst. Pharmacol."), 
-              a("doi:10.1002/psp4.12537", 
-                href = "https://ascpt.onlinelibrary.wiley.com/doi/abs/10.1002/psp4.12537"),
-              style = "font-size:14px"
-            ),
-            paste("It is intended to aid dosing regimen selection", 
+          p(paste("This application was developed to aid dosing regimen selection", 
             "for azithromycin in the treatment of COVID-19 conducted under the", 
             "controlled environment of a registered clinical trial.")),
           p(paste("Azithromycin is not approved by the FDA for treatment of", 
@@ -50,7 +40,17 @@ mod_disclaimer_ui <- function(id) {
             "with azithromycin outside of a registered clinical trial.")),
           p(paste("While this web application allows the comparison of in-vitro", 
             "effective concentration values with tissue exposure, these values may" , 
-            "not be indicative of effective concentrations in patients with COVID-19."))
+            "not be indicative of effective concentrations in patients with COVID-19.")),
+          p(paste("The published model used for the simulation of azithromycin",
+            "treatment regimens is documented in the manuscript below."), 
+            tags$blockquote(paste("Hughes, J.H., Sweeney, K., Ahadieh, S. and",
+              "Ouellet, D. (2020), Predictions of Systemic, Intracellular, and", 
+              "Lung Concentrations of Azithromycin with Different Dosing Regimens",
+              "used in COVID-19 Clinical Trials. CPT Pharmacometrics Syst. Pharmacol."), 
+              a("doi:10.1002/psp4.12537", 
+                href = "https://ascpt.onlinelibrary.wiley.com/doi/abs/10.1002/psp4.12537"),
+              style = "font-size:14px"
+          ))
         ),
         align = "justified"
       )
