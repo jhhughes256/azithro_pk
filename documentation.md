@@ -6,9 +6,7 @@ The application uses the inputs in the left box as input to produce the outputs
 in the right box. Outputs come from simulation of the population pharmacokinetic
 model described in the manuscript:
 
-*Hughes JH, Sweeney K, Ahadieh S, Ouellet D. Predictions of Systemic,*
-*Intracellular, and Lung Concentrations of Azithromycin with Different*
-*Dosing Regimens used in COVID-19 Clinical Trials.*
+*Hughes, J.H., Sweeney, K., Ahadieh, S. and Ouellet, D. (2020), Predictions of Systemic, Intracellular, and Lung Concentrations of Azithromycin with Different Dosing Regimens used in COVID‐19 Clinical Trials. CPT Pharmacometrics Syst. Pharmacol. [doi:10.1002/psp4.12537](https://ascpt.onlinelibrary.wiley.com/doi/abs/10.1002/psp4.12537)*
 
 * Update Dosing Regimen button begins the simulation using the current inputs
     + A simulation occurs using the default values on starting the application

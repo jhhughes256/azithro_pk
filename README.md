@@ -2,7 +2,7 @@
 
 This repository provides code for the web application described in the manuscript:
 
-"Predictions of Systemic, Intracellular, and Lung Concentrations of Azithromycin with Different Dosing Regimens used in COVID-19 Clinical Trials" by Jim H. Hughes, Kevin Sweeney, Sima Ahadieh and Daniele Ouellet.
+Hughes, J.H., Sweeney, K., Ahadieh, S. and Ouellet, D. (2020), Predictions of Systemic, Intracellular, and Lung Concentrations of Azithromycin with Different Dosing Regimens used in COVID‐19 Clinical Trials. CPT Pharmacometrics Syst. Pharmacol. [doi:10.1002/psp4.12537](https://ascpt.onlinelibrary.wiley.com/doi/abs/10.1002/psp4.12537)
 
 ## Purpose of the Application
 
