@@ -1,9 +1,9 @@
 # Module UI
   
 #' @title   mod_disclaimer_ui and mod_disclaimer_server
-#' @description  Shiny module which handles display of concentration-time plot.
-#' Includes data processing required to generate the lines and ribbons in the
-#' plot. Parent module for mod_tablesim.
+#' @description  Shiny module which handles the modal dialogue box which
+#'   displays the disclaimer requiring acknowledgement prior to use of the
+#'   application by the user.
 #'
 #' @param id shiny id
 #' @param input internal
