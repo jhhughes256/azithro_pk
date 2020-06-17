@@ -39,8 +39,8 @@ mod_regimen_ui <- function(id) {
     shinyWidgets::sliderTextInput(ns("nid"), 
       label = "Population Size for Simulation:",
       choices = c(20, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000), 
-      grid = TRUE, width = "90%"),
-    div(
+      grid = TRUE, width = "95%"),
+    fluidRow(
       column(6,
         numericInput(ns("bwt"), "Mean Body Weight (kg):",
           value = 79, min = 1, step = 0.1)
