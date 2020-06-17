@@ -34,7 +34,9 @@ mod_simulate_ui <- function(id) {
         fct_dashboardButton(ns("clear"), "Clear Saved Output",
           status = "warning", width = "100%")  # dashboardButton
       )
-    )  # div
+    ),  # div
+    hr(),
+    h4(strong("For Research Use Only"))
   )  # tagList
 }  # mod_simulate_ui
 
