@@ -57,10 +57,10 @@ mod_disclaimer_ui <- function(id) {
                 href = "https://ascpt.onlinelibrary.wiley.com/doi/abs/10.1002/psp4.12537"),
               style = "font-size:14px"
           )),
-          p(paste("By clicking the button below, I attest that I am researcher and",
-            "I will use this application only to aid dosing regimen selection of", 
-            "azithromycin for a patient population, not for an individual patient,",
-            "in an authorized clinical trial."))
+          p(paste("By clicking the button below, I attest that I am a researcher",
+            "and I will use this application only to aid dosing regimen selection", 
+            "of azithromycin for a patient population, not for an individual", 
+            "patient in an authorized clinical trial."))
         ),
         align = "justified"
       )
