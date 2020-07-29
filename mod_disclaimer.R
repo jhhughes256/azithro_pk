@@ -43,10 +43,10 @@ mod_disclaimer_ui <- function(id) {
             "controlled clinical trials.")),
           p(paste("Azithromycin is not approved for the treatment of COVID-19.", 
             " No recommendations are made for the treatment of patients with", 
-            "COVID-19 with azithromycin outside of a registered clinical trial.", 
+            "COVID-19 with azithromycin outside of a authorized clinical trial.", 
             " This application is intended for researchers to aid dosing regimen", 
             "selection of azithromycin under the controlled environment of a", 
-            "registered clinical trial.")),
+            "authorized clinical trial.")),
           p(paste("The published model used for the simulation of azithromycin",
             "treatment regimens is documented in the reference below."), 
             tags$blockquote(paste("Hughes, J.H., Sweeney, K., Ahadieh, S. and",
@@ -56,7 +56,11 @@ mod_disclaimer_ui <- function(id) {
               a("doi:10.1002/psp4.12537", 
                 href = "https://ascpt.onlinelibrary.wiley.com/doi/abs/10.1002/psp4.12537"),
               style = "font-size:14px"
-          ))
+          )),
+          p(paste("By clicking the button below, I attest that I am researcher and",
+            "I will use this application only to aid dosing regimen selection of", 
+            "azithromycin for a patient population, not for an individual patient,",
+            "in an authorized clinical trial."))
         ),
         align = "justified"
       )
